@@ -1,4 +1,5 @@
 [versions]
+accompanistSystemuicontroller = "0.30.1"
 dagger = "2.51.1"
 daggerCompiler = "2.51.1"
 daggerCompilerVersion = "2.51.1"
@@ -22,6 +23,7 @@ roomCompiler = "2.6.1"
 lifecycleLivedataKtx = "2.8.7"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 google-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompilerVersion" }

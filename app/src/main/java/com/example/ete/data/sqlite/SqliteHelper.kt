@@ -6,7 +6,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import com.example.ete.data.bean.UserBean
+import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.sqlite.SqliteConstants.Companion.CREATE_USER_TABLE
 import com.example.ete.data.sqlite.SqliteConstants.Companion.DATABASE_NAME
 import com.example.ete.data.sqlite.SqliteConstants.Companion.DATABASE_VERSION

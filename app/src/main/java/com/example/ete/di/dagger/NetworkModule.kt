@@ -1,13 +1,11 @@
-
 package com.example.ete.di.dagger
 
-import android.content.Context
 import android.util.Log
+import com.example.ete.BuildConfig
 import com.example.ete.data.interceptor.AuthorizationInterceptor
 import com.example.ete.data.interceptor.RequestInterceptor
 import com.example.ete.data.remote.ApiInterface
 import com.example.ete.data.remote.ApiRepositoryImpl
-import com.example.ete.data.remote.helper.NetworkErrorHandler
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -64,7 +62,7 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://stage-api.ete.space/api/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())

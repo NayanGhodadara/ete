@@ -11,4 +11,11 @@
     <string name="error_found">Error</string>
     <string name="network_error">Network error</string>
     <string name="timeout">Timeout</string>
+
+    <!--Welcome-->
+    <string name="continue_with_email">Continue with Email</string>
+    <string name="continue_with_phone_no">Continue with Phone No</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_apple">Continue with Apple</string>
+
 </resources>

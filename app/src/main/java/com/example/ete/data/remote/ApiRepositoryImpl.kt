@@ -1,7 +1,10 @@
 package com.example.ete.data.remote
 
 import com.example.ete.data.bean.ApiResponse
-import com.example.ete.data.bean.UserBean
+import com.example.ete.data.bean.country.CountryBean
+import com.example.ete.data.bean.dropdown.DropDownListBean
+import com.example.ete.data.bean.update.UpdateBean
+import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.helper.ApiUtils.getAPIError
 import com.example.ete.data.remote.helper.ApiUtils.getNetworkErrorMessage
 import com.example.ete.data.remote.helper.Resource
@@ -15,10 +18,59 @@ class ApiRepositoryImpl
 @Inject constructor(
     private val apiInterface: ApiInterface
 ) {
-    fun getCountry(): Flow<Resource<ApiResponse<ArrayList<Any>>>> = flow {
+
+    /** User **/
+    fun getUserAsync(): Flow<Resource<ApiResponse<UserBean>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.getUserAsync().await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    fun getCountryList(): Flow<Resource<ApiResponse<ArrayList<CountryBean>>>> = flow {
         emit(Resource.loading(null))
         try {
             val response = apiInterface.getCountryListAsync().await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    /** Drop down **/
+    fun getDropDownList(): Flow<Resource<ApiResponse<DropDownListBean>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.getDropDownListAsync().await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    /** App version **/
+    fun checkAppVersion(data: HashMap<String, Any>): Flow<Resource<ApiResponse<UpdateBean>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.checkAppVersionAsync(data).await()
             if (response.isSuccessful) {
                 emit(Resource.success(response.body() ?: return@flow))
             } else {
