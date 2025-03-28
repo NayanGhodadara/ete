@@ -9,6 +9,7 @@ import com.example.ete.data.Constant.PrefsKeys.USER_DATA
 import com.example.ete.data.EndPoint.DropDown.COUNTRY_LIST
 import com.example.ete.data.EndPoint.DropDown.DROP_DOWN_LIST
 import com.example.ete.data.bean.Authentication
+import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.ApiRepositoryImpl
 import com.example.ete.data.remote.helper.NetworkErrorHandler
@@ -33,6 +34,7 @@ class MyApplication : Application() {
 
     @Inject
     lateinit var apiRepoImpl: ApiRepositoryImpl
+
 
     companion object {
         var instance: MyApplication? = null
@@ -81,6 +83,15 @@ class MyApplication : Application() {
             Gson().fromJson(Prefs.getString(AUTH_DATA, ""), object : TypeToken<Authentication>() {}.type)
         else
             Authentication()
+    }
+
+
+    //Get Country detail
+    fun getCountryList(): ArrayList<CountryBean> {
+        return if (Prefs.contains(COUNTRY_LIST))
+            Gson().fromJson(Prefs.getString(COUNTRY_LIST, ""), object : TypeToken<ArrayList<CountryBean>>() {}.type)
+        else
+            ArrayList()
     }
 
 

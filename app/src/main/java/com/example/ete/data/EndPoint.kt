@@ -11,6 +11,12 @@ object EndPoint {
         const val V1 = "v1/"
     }
 
+    //Auth end point
+    object Auth {
+        const val SEND_OTP: String = "${V1}send-otp"
+        const val VERIFY_OTP: String = "${V1}verify-otp"
+    }
+
     //User end point
     object User {
         const val USERS: String = "${V1}users"

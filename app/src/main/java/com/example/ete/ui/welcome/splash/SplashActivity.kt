@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -27,15 +28,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ete.R
+import com.example.ete.data.Constant
 import com.example.ete.data.Constant.ForceUpdate.FORCE_UPDATE
 import com.example.ete.data.Constant.ForceUpdate.OPTIONAL_UPDATE
 import com.example.ete.data.Constant.ForceUpdate.UP_TO_DATE
+import com.example.ete.data.Constant.IntentObject.INTENT_IS_FIRST_TIME
 import com.example.ete.data.Constant.PrefsKeys.USER_DATA
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.di.MyApplication
 import com.example.ete.theme.EteTheme
 import com.example.ete.ui.main.MainActivity
-import com.example.ete.ui.welcome.WelcomeActivity
+import com.example.ete.ui.welcome.nav.AuthActivity
 import com.example.ete.util.Prefs
 import com.google.gson.Gson
 
@@ -97,6 +100,11 @@ class SplashActivity : ComponentActivity() {
                     } else {
                         if (MyApplication.instance?.getUserData()?.isFirstTime == true) {
                             //Create profile
+                            startActivity(
+                                Intent(this, AuthActivity::class.java).apply {
+                                    putExtra(INTENT_IS_FIRST_TIME, true)
+                                }
+                            )
                             finish()
                         } else {
                             startActivity(Intent(this, MainActivity::class.java))
@@ -106,12 +114,12 @@ class SplashActivity : ComponentActivity() {
                 }
 
                 Status.ERROR -> {
-                    startActivity(Intent(this, WelcomeActivity::class.java))
+                    startActivity(Intent(this, AuthActivity::class.java))
                     finish()
                 }
 
                 Status.WARN -> {
-                    startActivity(Intent(this, WelcomeActivity::class.java))
+                    startActivity(Intent(this, AuthActivity::class.java))
                     finish()
                 }
             }
@@ -148,9 +156,8 @@ fun SplashScreen(context: Context, vm: SplashActivityVM) {
 }
 
 fun nextScreen(activity: Activity, vm: SplashActivityVM) {
-
     if (MyApplication.instance?.getUserData()?.id == null) {
-        activity.startActivity(Intent(activity, WelcomeActivity::class.java))
+        activity.startActivity(Intent(activity, AuthActivity::class.java))
         activity.finish()
     } else {
         vm.callGetUserApi()

@@ -27,9 +27,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Main -->
+        <!-- Auth -->
         <activity
-            android:name=".ui.welcome.WelcomeActivity"
+            android:name=".ui.welcome.nav.AuthActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Main -->
