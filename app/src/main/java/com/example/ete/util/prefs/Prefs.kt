@@ -1,4 +1,4 @@
-package com.example.ete.util
+package com.example.ete.util.prefs
 
 import android.content.ContextWrapper
 import android.content.SharedPreferences

@@ -1,5 +1,10 @@
 package com.example.ete.ui.main
 
-import com.example.ete.di.viewmodel.BaseViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainActivityVM : BaseViewModel()
+@HiltViewModel
+class MainActivityVM @Inject constructor() : ViewModel() {
+
+}

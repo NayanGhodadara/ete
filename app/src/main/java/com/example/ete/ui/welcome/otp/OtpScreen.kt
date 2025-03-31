@@ -2,7 +2,6 @@ package com.example.ete.ui.welcome.otp
 
 import android.app.Activity
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,19 +23,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,31 +46,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
-import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.ete.R
+import com.example.ete.data.Constant.IntentObject.INTENT_AUTH_BEAN
 import com.example.ete.data.Constant.PrefsKeys.AUTH_DATA
 import com.example.ete.data.Constant.PrefsKeys.USER_DATA
 import com.example.ete.data.Constant.Screen.CREATE_ACCOUNT
+import com.example.ete.data.bean.auth.AuthBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.theme.black
-import com.example.ete.theme.errorColor
 import com.example.ete.theme.grayV2
 import com.example.ete.theme.grayV2_10
 import com.example.ete.theme.grayV2_12
 import com.example.ete.theme.red
-import com.example.ete.theme.successColor
-import com.example.ete.theme.warningColor
 import com.example.ete.theme.white
 import com.example.ete.ui.main.MainActivity
-import com.example.ete.ui.welcome.nav.AuthActivity
 import com.example.ete.ui.welcome.nav.AuthActivityVM
-import com.example.ete.util.CustomBuildAnnotatedString
-import com.example.ete.util.Prefs
+import com.example.ete.util.cookie.CookieBar
+import com.example.ete.util.cookie.CookieBarType
+import com.example.ete.util.prefs.Prefs
+import com.example.ete.util.span.CustomBuildAnnotatedString
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Preview(showSystemUi = true)
 @Composable
@@ -85,114 +77,26 @@ fun PreviewOtp() {
 }
 
 @Composable
-fun OtpScreen(vm: AuthActivityVM? = null, navController: NavController? = null) {
+fun OtpScreen(navController: NavController? = null) {
+    val vm: AuthActivityVM = hiltViewModel()
+
+    val obrSendOtp by vm.obrSendOtp.observeAsState()
+    val obrVerify by vm.obrVerify.observeAsState()
+
+    val authBean = navController?.previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<AuthBean>(INTENT_AUTH_BEAN)
+
+    CookieBar(authBean?.successMessage.orEmpty(), CookieBarType.SUCCESS)
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val rememberCoroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val activity = context as? Activity
+    val activity = context as Activity
 
-    /** snack bar **/
-    val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarColor = remember { mutableStateOf(successColor) }
-
-    val statePhone = vm?.authBean?.phone.isNullOrEmpty().not()
+    val statePhone = authBean?.phone.orEmpty().isEmpty().not()
     var otpValue by remember { mutableStateOf("") }
 
     var canShowError by remember { mutableStateOf(false) }
-
-    /** Observer **/
-    vm?.obrSendOtp?.observe(activity as AuthActivity) {
-        when (it.status) {
-            Status.LOADING -> {
-                vm.isLoading.value = true
-            }
-
-            Status.SUCCESS -> {
-                vm.isLoading.value = false
-                vm.authBean.orderId = it.data?.data?.orderId.orEmpty()
-                rememberCoroutineScope.launch {
-                    snackBarColor.value = warningColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
-            Status.WARN -> {
-                vm.isLoading.value = false
-                rememberCoroutineScope.launch {
-                    snackBarColor.value = warningColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
-            Status.ERROR -> {
-                vm.isLoading.value = false
-                rememberCoroutineScope.launch {
-                    snackBarColor.value = errorColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-        }
-    }
-
-    vm?.obrVerify?.observe(activity as AuthActivity) {
-        when (it.status) {
-            Status.LOADING -> {
-                vm.isLoading.value = true
-            }
-
-            Status.SUCCESS -> {
-                vm.isLoading.value = false
-
-                val userData = it.data?.data
-                Prefs.putString(USER_DATA, Gson().toJson(userData))
-                Prefs.putString(AUTH_DATA, Gson().toJson(userData?.authentication))
-
-                if (userData?.isAccountRestricted == true) {
-                    //startNewActivity(SuspendAccountActivity.newIntent(this))
-                } else {
-                    if (userData?.isFirstTime == true) {
-                        navController?.navigate(CREATE_ACCOUNT.name)
-                    } else {
-                        val intent = Intent(context, MainActivity::class.java)
-                        context.startActivity(intent)
-                    }
-                }
-                finishAffinity(context as Activity)
-            }
-
-            Status.WARN -> {
-                vm.isLoading.value = false
-                rememberCoroutineScope.launch {
-                    snackBarColor.value = warningColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
-            Status.ERROR -> {
-                vm.isLoading.value = false
-                rememberCoroutineScope.launch {
-                    snackBarColor.value = errorColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-        }
-    }
 
     //Set Timer
     @Composable
@@ -244,8 +148,8 @@ fun OtpScreen(vm: AuthActivityVM? = null, navController: NavController? = null) 
     //Set Phone Number and Email
     fun setEmailAndPhoneNumber(): String {
         try {
-            val phoneString = vm?.authBean?.phone.orEmpty().trim()
-            val emailString = vm?.authBean?.email.orEmpty().trim()
+            val phoneString = authBean?.phone.orEmpty().trim()
+            val emailString = authBean?.email.orEmpty().trim()
             if (statePhone) {
                 val fist2Word: String = phoneString.substring(0, 2)
                 val last2Word: String = phoneString.substring(phoneString.length - 2, phoneString.length)
@@ -279,226 +183,267 @@ fun OtpScreen(vm: AuthActivityVM? = null, navController: NavController? = null) 
     }
 
     /** UI **/
-    LaunchedEffect(Unit) {
-        snackBarColor.value = successColor
-        snackBarHostState.showSnackbar(
-            message = vm?.authBean?.successMessage.orEmpty(),
-            duration = SnackbarDuration.Short,
+    @Composable
+    fun CharView(index: Int) {
+        val isFilled = index < otpValue.length
+        val char = if (isFilled) otpValue[index].toString() else "0"
+        val textColor = if (isFilled) black else grayV2
+
+        Text(
+            modifier = Modifier
+                .border(
+                    1.dp,
+                    if (canShowError) {
+                        red
+                    } else {
+                        grayV2_12
+                    }, RoundedCornerShape(10.dp)
+                )
+                .background(grayV2_10, RoundedCornerShape(10.dp))
+                .padding(horizontal = 21.dp, vertical = 16.dp),
+            text = char,
+            style = MaterialTheme.typography.bodyLarge,
+            color = textColor,
+            textAlign = TextAlign.Center
         )
     }
-    Scaffold(
-        snackbarHost = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .zIndex(2f),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                SnackbarHost(snackBarHostState) { data ->
-                    Snackbar(
-                        snackbarData = data,
-                        containerColor = snackBarColor.value,
-                        contentColor = white,
-                        actionColor = black,
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Column(
+
+    @Composable
+    fun OtpTextField(
+        otpCount: Int = 6,
+        onOtpTextChange: (String, Boolean) -> Unit,
+        onDoneClick: () -> Unit
+    ) {
+
+        BasicTextField(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(white)
-        ) {
-            /** Header **/
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(top = 14.dp, start = 24.dp)
-                    .size(24.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        navController?.popBackStack()
-                    }
-            )
+                .padding(horizontal = 24.dp)
+                .padding(top = 8.dp),
+            value = TextFieldValue(otpValue, selection = TextRange(otpValue.length)),
+            onValueChange = {
+                if (it.text.length <= otpCount) {
+                    onOtpTextChange.invoke(it.text, it.text.length == otpCount)
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                onDoneClick()
+                if (otpValue.length == otpCount) {
+                    keyboardController?.hide()
 
-            Text(
-                text = stringResource(R.string.verify_your_email),
-                style = MaterialTheme.typography.headlineSmall,
-                fontSize = 26.sp,
-                color = black,
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .padding(horizontal = 24.dp)
-            )
-            Text(
-                text = setEmailAndPhoneNumber(),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 16.sp,
-                color = grayV2,
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .padding(horizontal = 24.dp)
-            )
-
-            Text(
-                text = CustomBuildAnnotatedString.instance.getReqString(
-                    stringResource(R.string.otp)
-                ),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp)
-            )
-
-            /** Input **/
-            OtpTextField(
-                canShowError,
-                otpText = otpValue,
-                onOtpTextChange = { value, otpInputFilled ->
-                    otpValue = value
-                },
-                onDoneClick = {
                     if (isValid()) {
                         canShowError = false
-                        vm?.authBean?.otp = otpValue
-                        vm?.callVerifyOtp()
+                        authBean?.otp = otpValue
+                        vm.authBean = authBean ?: AuthBean()
+                        vm.callVerifyOtp()
                         keyboardController?.hide()
                     } else {
                         canShowError = true
                     }
                 }
-            )
-
-            if (canShowError) {
-                Text(
-                    text = stringResource(R.string.please_enter_valid_otp),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    color = red,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            /** Timer **/
-            SetTimer(onResend = {
-                vm?.callSendOtpAsync()
-            })
-
-            /** Verify **/
-            Box(
-                Modifier
-                    .padding(top = 36.dp)
-            ) {
-                Text(
-                    text = if (vm?.isLoading?.value == true) "" else stringResource(R.string.verify),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = white,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .background(black, shape = RoundedCornerShape(8.dp))
-                        .padding(vertical = 12.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (isValid()) {
-                                canShowError = false
-                                vm?.authBean?.otp = otpValue
-                                vm?.callVerifyOtp()
-                                keyboardController?.hide()
-                            } else {
-                                canShowError = true
-                            }
-                        },
-                    textAlign = TextAlign.Center,
-                )
-                if (vm?.isLoading?.value == true) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(24.dp),
-                        strokeWidth = 3.dp,
-                        color = white
-                    )
+            }),
+            decorationBox = {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    repeat(otpCount) { index ->
+                        CharView(index)
+                        Spacer(modifier = Modifier.width(5.dp))
+                    }
                 }
+            }
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(white)
+    ) {
+        /** Header **/
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_left),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(top = 14.dp, start = 24.dp)
+                .size(24.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    navController?.popBackStack()
+                }
+        )
+
+        Text(
+            text = stringResource(R.string.verify_your_email),
+            style = MaterialTheme.typography.headlineSmall,
+            fontSize = 26.sp,
+            color = black,
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .padding(horizontal = 24.dp)
+        )
+        Text(
+            text = setEmailAndPhoneNumber(),
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 16.sp,
+            color = grayV2,
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .padding(horizontal = 24.dp)
+        )
+
+        Text(
+            text = CustomBuildAnnotatedString.instance.getReqString(
+                stringResource(R.string.otp)
+            ),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .padding(top = 24.dp, start = 24.dp)
+        )
+
+        /** Input **/
+        OtpTextField(
+            onOtpTextChange = { value, _ ->
+                otpValue = value
+            },
+            onDoneClick = {
+                if (isValid()) {
+                    canShowError = false
+                    authBean?.otp = otpValue
+                    vm.authBean = authBean ?: AuthBean()
+                    vm.callVerifyOtp()
+                    keyboardController?.hide()
+                } else {
+                    canShowError = true
+                }
+            }
+        )
+
+        if (canShowError) {
+            Text(
+                text = stringResource(R.string.please_enter_valid_otp),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                color = red,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        /** Timer **/
+        SetTimer(onResend = {
+            vm.callSendOtpAsync()
+        })
+
+        /** Verify **/
+        Box(
+            Modifier
+                .padding(top = 36.dp)
+        ) {
+            Text(
+                text = if (vm.isLoading.value) "" else stringResource(R.string.verify),
+                style = MaterialTheme.typography.headlineSmall,
+                color = white,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .background(black, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 12.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        if (isValid()) {
+                            canShowError = false
+                            authBean?.otp = otpValue
+                            vm.authBean = authBean ?: AuthBean()
+                            vm.callVerifyOtp()
+                            keyboardController?.hide()
+                        } else {
+                            canShowError = true
+                        }
+                    },
+                textAlign = TextAlign.Center,
+            )
+            if (vm.isLoading.value) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(24.dp),
+                    strokeWidth = 3.dp,
+                    color = white
+                )
             }
         }
     }
-}
 
-@Composable
-fun OtpTextField(
-    canShowError: Boolean = false,
-    otpText: String,
-    otpCount: Int = 6,
-    onOtpTextChange: (String, Boolean) -> Unit,
-    onDoneClick: () -> Unit
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    /** Observer **/
+    when (obrSendOtp?.status) {
+        Status.LOADING -> {
+            vm.isLoading.value = true
+        }
 
-    BasicTextField(
-        modifier = Modifier
-            .padding(horizontal = 24.dp)
-            .padding(top = 8.dp),
-        value = TextFieldValue(otpText, selection = TextRange(otpText.length)),
-        onValueChange = {
-            if (it.text.length <= otpCount) {
-                onOtpTextChange.invoke(it.text, it.text.length == otpCount)
-            }
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(onDone = {
-            onDoneClick()
-            if (otpText.length == otpCount) {
-                keyboardController?.hide()
-            }
-        }),
-        decorationBox = {
-            Row(horizontalArrangement = Arrangement.Center) {
-                repeat(otpCount) { index ->
-                    CharView(
-                        canShowError,
-                        index = index,
-                        text = otpText
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
+        Status.SUCCESS -> {
+            vm.isLoading.value = false
+            authBean?.orderId = obrSendOtp?.data?.data?.orderId.orEmpty()
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.SUCCESS)
+        }
+
+        Status.WARN -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.WARNING)
+
+        }
+
+        Status.ERROR -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.ERROR)
+        }
+
+        else -> {}
+    }
+
+    when (obrVerify?.status) {
+        Status.LOADING -> {
+            vm.isLoading.value = true
+        }
+
+        Status.SUCCESS -> {
+            vm.isLoading.value = false
+
+            val userData = obrVerify?.data?.data
+            Prefs.putString(USER_DATA, Gson().toJson(userData))
+            Prefs.putString(AUTH_DATA, Gson().toJson(userData?.authentication))
+
+            if (userData?.isAccountRestricted == true) {
+                //startNewActivity(SuspendAccountActivity.newIntent(this))
+            } else {
+                if (userData?.isFirstTime == true) {
+                    navController?.navigate(CREATE_ACCOUNT.name) {
+                        navController.graph.startDestinationId.let { popUpTo(it) { inclusive = true } }
+                    }
+                } else {
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                    activity.finishAffinity()
                 }
             }
         }
-    )
-}
 
-@Composable
-private fun CharView(canShowError: Boolean, index: Int, text: String) {
-    val isFilled = index < text.length
-    val char = if (isFilled) text[index].toString() else "0"
-    val textColor = if (isFilled) black else grayV2
+        Status.WARN -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.WARNING)
+        }
 
-    Text(
-        modifier = Modifier
-            .border(
-                1.dp,
-                if (canShowError) {
-                    red
-                } else {
-                    grayV2_12
-                }, RoundedCornerShape(10.dp)
-            )
-            .background(grayV2_10, RoundedCornerShape(10.dp))
-            .padding(horizontal = 21.dp, vertical = 16.dp),
-        text = char,
-        style = MaterialTheme.typography.bodyLarge,
-        color = textColor,
-        textAlign = TextAlign.Center
-    )
+        Status.ERROR -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.ERROR)
+        }
+
+        else -> {}
+    }
 }

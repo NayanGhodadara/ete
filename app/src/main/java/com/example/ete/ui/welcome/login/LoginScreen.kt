@@ -1,7 +1,5 @@
 package com.example.ete.ui.welcome.login
 
-import android.app.Activity
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,22 +22,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -47,30 +39,28 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.ete.R
+import com.example.ete.data.Constant.IntentObject.INTENT_AUTH_BEAN
 import com.example.ete.data.Constant.IntentObject.INTENT_IS_PHONE_AUTH
 import com.example.ete.data.Constant.Screen.OTP
 import com.example.ete.data.bean.auth.AuthBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.di.dialog.ShowCountryDialog
 import com.example.ete.theme.black
-import com.example.ete.theme.errorColor
 import com.example.ete.theme.grayV2
 import com.example.ete.theme.grayV2_10
 import com.example.ete.theme.grayV2_12
 import com.example.ete.theme.red
-import com.example.ete.theme.successColor
-import com.example.ete.theme.warningColor
 import com.example.ete.theme.white
 import com.example.ete.theme.whiteV2
-import com.example.ete.ui.welcome.nav.AuthActivity
 import com.example.ete.ui.welcome.nav.AuthActivityVM
 import com.example.ete.ui.welcome.nav.AuthOption
 import com.example.ete.util.AppUtils
-import com.example.ete.util.CustomBuildAnnotatedString
-import kotlinx.coroutines.launch
+import com.example.ete.util.cookie.CookieBar
+import com.example.ete.util.cookie.CookieBarType
+import com.example.ete.util.span.CustomBuildAnnotatedString
 
 
 @Preview(showSystemUi = true)
@@ -80,15 +70,12 @@ fun PreviewLogin() {
 }
 
 @Composable
-fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val rememberCoroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val activity = context as? Activity
+fun LoginScreen(navController: NavController? = null) {
+    val vm: AuthActivityVM = hiltViewModel()
 
-    /** snack bar **/
-    val snackBarHostState = remember { SnackbarHostState() }
-    val snackBarColor = remember { mutableStateOf(successColor) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+    val obrSendOtp by vm.obrSendOtp.observeAsState()
 
     /** Field **/
     val email = remember { mutableStateOf("") }
@@ -136,77 +123,11 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
         }
     }
 
-    /** Observer **/
-    vm?.obrSendOtp?.observe(activity as AuthActivity) {
-        when (it.status) {
-            Status.LOADING -> {
-                vm.isLoading.value = true
-            }
-
-            Status.SUCCESS -> {
-                vm.isLoading.value = false
-                val authBean = AuthBean()
-                authBean.countryCode = countryField.value
-                authBean.phone = phone.value.trim()
-                authBean.email = email.value.trim()
-                authBean.successMessage = it.data?.message.orEmpty()
-                authBean.orderId = it.data?.data?.orderId.orEmpty()
-                vm.authBean = authBean
-                navController?.navigate(OTP.name)
-            }
-
-            Status.WARN -> {
-                rememberCoroutineScope.launch {
-                    vm.isLoading.value = false
-                    snackBarColor.value = warningColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-
-            Status.ERROR -> {
-                rememberCoroutineScope.launch {
-                    vm.isLoading.value = false
-                    snackBarColor.value = errorColor
-                    snackBarHostState.showSnackbar(
-                        message = it.message.orEmpty(),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(vm?.isLoading?.value) {
-        Log.e("test", ":isLoading.value::${vm?.isLoading?.value}")
-    }
-
     /** UI **/
-    Scaffold(
-        snackbarHost = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .zIndex(2f),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                SnackbarHost(snackBarHostState) { data ->
-                    Snackbar(
-                        snackbarData = data,
-                        containerColor = snackBarColor.value,
-                        contentColor = white,
-                        actionColor = black,
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+    Box {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .background(white)
         ) {
 
@@ -317,10 +238,10 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                                             errorMsg.value = errorMessage
                                         },
                                         success = {
-                                            vm?.authBean?.email = email.value.trim()
-                                            vm?.authBean?.phone = phone.value.trim()
-                                            vm?.authBean?.countryCode = countryField.value
-                                            vm?.callSendOtpAsync()
+                                            vm.authBean.email = email.value.trim()
+                                            vm.authBean.phone = phone.value.trim()
+                                            vm.authBean.countryCode = countryField.value
+                                            vm.callSendOtpAsync()
                                             keyboardController?.hide()
                                         }
                                     )
@@ -363,10 +284,10 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                                         errorMsg.value = errorMessage
                                     },
                                     success = {
-                                        vm?.authBean?.email = email.value.trim()
-                                        vm?.authBean?.phone = phone.value.trim()
-                                        vm?.authBean?.countryCode = countryField.value
-                                        vm?.callSendOtpAsync()
+                                        vm.authBean.email = email.value.trim()
+                                        vm.authBean.phone = phone.value.trim()
+                                        vm.authBean.countryCode = countryField.value
+                                        vm.callSendOtpAsync()
                                         keyboardController?.hide()
                                     }
                                 )
@@ -395,7 +316,7 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                     .padding(horizontal = 24.dp)
             ) {
                 Text(
-                    text = if (vm?.isLoading?.value == true) "" else stringResource(R.string.login),
+                    text = if (vm.isLoading.value) "" else stringResource(R.string.login),
                     style = MaterialTheme.typography.headlineSmall,
                     color = white,
                     modifier = Modifier
@@ -411,10 +332,10 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                                     errorMsg.value = errorMessage
                                 },
                                 success = {
-                                    vm?.authBean?.email = email.value.trim()
-                                    vm?.authBean?.phone = phone.value.trim()
-                                    vm?.authBean?.countryCode = countryField.value
-                                    vm?.callSendOtpAsync()
+                                    vm.authBean.email = email.value.trim()
+                                    vm.authBean.phone = phone.value.trim()
+                                    vm.authBean.countryCode = countryField.value
+                                    vm.callSendOtpAsync()
                                     keyboardController?.hide()
                                 }
                             )
@@ -422,7 +343,7 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                     textAlign = TextAlign.Center,
                 )
 
-                if (vm?.isLoading?.value == true) {
+                if (vm.isLoading.value) {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -501,5 +422,40 @@ fun LoginScreen(vm: AuthActivityVM? = null, navController: NavController? = null
                 )
             }
         }
+    }
+
+
+    /** Observer **/
+    when (obrSendOtp?.status) {
+        Status.LOADING -> {
+            vm.isLoading.value = true
+        }
+
+        Status.SUCCESS -> {
+            vm.isLoading.value = false
+            val authBean = AuthBean()
+            authBean.countryCode = countryField.value
+            authBean.phone = phone.value.trim()
+            authBean.email = email.value.trim()
+            authBean.successMessage = obrSendOtp?.data?.message.orEmpty()
+            authBean.orderId = obrSendOtp?.data?.data?.orderId.orEmpty()
+
+            navController?.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set(INTENT_AUTH_BEAN, authBean)
+            navController?.navigate(OTP.name)
+        }
+
+        Status.WARN -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.WARNING)
+        }
+
+        Status.ERROR -> {
+            vm.isLoading.value = false
+            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.ERROR)
+        }
+
+        else -> {}
     }
 }

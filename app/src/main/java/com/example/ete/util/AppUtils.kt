@@ -1,10 +1,21 @@
 package com.example.ete.util
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
 import android.telephony.TelephonyManager
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ete.data.Constant.PrefsKeys.AWS_TOKEN
+import com.example.ete.data.Constant.PrefsKeys.IDENTITY_ID
+import com.example.ete.data.bean.ApiResponse
+import com.example.ete.data.bean.aws.AWSBean
 import com.example.ete.data.bean.country.CountryBean
+import com.example.ete.data.remote.ApiRepositoryImpl
+import com.example.ete.data.remote.helper.ApiCallback
 import com.example.ete.di.MyApplication
+import com.example.ete.util.prefs.Prefs
+import retrofit2.Response
 import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
@@ -12,6 +23,18 @@ import kotlin.math.pow
 
 object AppUtils {
 
+    fun createImageUri(context: Context): Uri? {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera") // Save to DCIM folder
+        }
+
+        return context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+    }
 
     fun getDefaultCountry(context: Context): CountryBean {
         return try {
@@ -281,6 +304,36 @@ object AppUtils {
             DecimalFormat("#0.0").format(count / 10.0.pow((base * 3).toDouble())) + suffix[base]
         } else {
             DecimalFormat("#,##0").format(count)
+        }
+    }
+
+    //Call AWS token API
+    fun callAWSTokenAPI(apiRepoImpl: ApiRepositoryImpl, callback: (Boolean) -> Unit) {
+        try {
+
+            apiRepoImpl.awsToken(object : ApiCallback<Response<ApiResponse<AWSBean>>>() {
+                override fun onLoading() {
+
+                }
+
+                override fun onSuccess(response: Response<ApiResponse<AWSBean>>) {
+                    Prefs.putString(IDENTITY_ID, response.body()?.data?.identityId)
+                    Prefs.putString(AWS_TOKEN, response.body()?.data?.token)
+
+                    callback(true)
+                }
+
+                override fun onFailed(message: String) {
+                    callback(false)
+                }
+
+                override fun onErrorThrow(exception: Exception) {
+                    callback(false)
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            callback(false)
         }
     }
 }

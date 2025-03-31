@@ -1,8 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.10"
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -40,6 +44,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("boolean", "EnableAnim", "true")
 
+            //Live
+            /*buildConfigField("String", "BASE_URL", "\"https://api.ete.space/api/\"")
+            buildConfigField("String", "API_KEY", "\"8edf1c68-57f2-4ef8-a492-1768c5c216b3\"")
+            buildConfigField("String", "PLACE_API_KEY", "\"QUl6YVN5Q3hrdlNtLXVuZ1p0WHdiNE9fZjh6VEZ6MUZ1eUFJMzNj\"")
+            buildConfigField("String", "AWS_ENVIRONMENT", "\"production\"")*/
+
             //Staging
             buildConfigField("String", "BASE_URL", "\"https://stage-api.ete.space/api/\"")
             buildConfigField("String", "API_KEY", "\"8edf1c68-57f2-4ef8-a492-1768c5c216b3\"")
@@ -51,6 +61,12 @@ android {
 
         debug {
             buildConfigField("boolean", "EnableAnim", "true")
+
+            //Live
+            /*buildConfigField("String", "BASE_URL", "\"https://api.ete.space/api/\"")
+            buildConfigField("String", "API_KEY", "\"8edf1c68-57f2-4ef8-a492-1768c5c216b3\"")
+            buildConfigField("String", "PLACE_API_KEY", "\"QUl6YVN5Q3hrdlNtLXVuZ1p0WHdiNE9fZjh6VEZ6MUZ1eUFJMzNj\"")
+            buildConfigField("String", "AWS_ENVIRONMENT", "\"production\"")*/
 
             //Staging
             buildConfigField("String", "BASE_URL", "\"https://stage-api.ete.space/api/\"")
@@ -88,6 +104,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -111,21 +128,44 @@ dependencies {
     implementation(libs.io.reactivex.rxjava2.rxjava3)
     implementation(libs.io.reactivex.rxjava2.rxandroid3)
 
-    // Hilt
-    implementation (libs.dagger)
-    kapt (libs.dagger.compiler)
-    // For Kotlin
-    kapt (libs.google.dagger.compiler)
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.androidx.room.compiler)
-
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
-    implementation (libs.accompanist.systemuicontroller)
+    implementation(libs.accompanist.systemuicontroller)
 
     //Cookie Bar
     implementation(libs.org.aviran.cookiebar2.cookiebar24)
+
+    //Dagger Hit
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.compiler)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(libs.coil.compose)
+
+    //AWS
+    implementation(libs.aws.android.sdk.s3)
+    implementation(libs.amazonaws.aws.android.sdk.core)
+    implementation(libs.aws.android.sdk.cognitoauth)
+    implementation(libs.aws.android.sdk.cognitoidentityprovider)
+
+    implementation(libs.timber)
+
+    implementation(libs.google.play.services.auth.api.phone)
+    implementation(libs.com.google.android.libraries.identity.googleid.googleid)
+    implementation(libs.play.services.auth)
+
+    //Google service
+    implementation(libs.gms.play.services.location)
+    implementation(libs.com.google.firebase.firebase.messaging.ktx2)
+    implementation(libs.gms.play.services.auth)
+
+    //Crash and Analytics
+    implementation(libs.com.google.firebase.firebase.crashlytics.ktx2)
+    implementation(libs.com.google.firebase.firebase.analytics.ktx2)
+    implementation(libs.com.google.firebase.firebase.auth.ktx2)
 }

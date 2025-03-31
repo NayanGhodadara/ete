@@ -1,4 +1,4 @@
-package com.example.ete.util
+package com.example.ete.util.span
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString

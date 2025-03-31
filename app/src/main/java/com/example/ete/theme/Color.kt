@@ -3,10 +3,14 @@ package com.example.ete.theme
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 
-val errorColor = hexToColor("#D50000")
-val infoColor = hexToColor("#08AAD2")
-val warningColor = hexToColor("#FFA900")
-val successColor = hexToColor("#388E3C")
+val errorColor = hexToColor("#FF9E9E")
+val errorBorder = hexToColor("#FF1414")
+val infoColor = hexToColor("#7ADDF8")
+val infoBorder = hexToColor("#00C6FF")
+val warningColor = hexToColor("#FFDB94")
+val warningBorder = hexToColor("#FFA900")
+val successColor = hexToColor("#8BDE8B")
+val successBorder = hexToColor("#00DC00")
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

@@ -8,7 +8,7 @@ data class CountryBean(
     val countryCode: String = "",
 
     @SerializedName("title")
-    val title: String? = null,
+    var title: String? = null,
 
     @SerializedName("id")
     val id: Long? = 0L,

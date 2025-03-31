@@ -15,6 +15,7 @@ object EndPoint {
     object Auth {
         const val SEND_OTP: String = "${V1}send-otp"
         const val VERIFY_OTP: String = "${V1}verify-otp"
+        const val SOCIAL_LOGIN: String = "${V1}social-login"
     }
 
     //User end point
@@ -26,6 +27,10 @@ object EndPoint {
     object DropDown {
         const val COUNTRY_LIST: String = "${V1}country-list"
         const val DROP_DOWN_LIST: String = "${V1}seeder-dropdown/list"
+    }
+
+    object AWS {
+        const val AWS_TOKEN: String = "${V1}aws/token"
     }
 
     //App version end point

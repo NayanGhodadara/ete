@@ -1,5 +1,8 @@
 package com.example.ete.data
 
+import com.example.ete.BuildConfig.AWS_ENVIRONMENT
+import com.example.ete.di.MyApplication
+
 object Constant {
 
     //Preference key
@@ -7,6 +10,8 @@ object Constant {
         const val FIREBASE_MESSAGE_TOKEN: String = "firebaseMessageToken"
         const val USER_DATA: String = "userData"
         const val AUTH_DATA: String = "authData"
+        const val IDENTITY_ID: String = "identityId"
+        const val AWS_TOKEN: String = "awsToken"
     }
 
     //Intent keys
@@ -125,6 +130,21 @@ object Constant {
         const val MONTHS = "months"
         const val LAST_ADDRESS_ID = "lastAddressId"
         const val TYPE = "type"
+    }
+
+    //AWS key
+    object AWSObject {
+        const val AWS_REGION = "us-east-1"
+        const val STORAGE_NAME = "ete-application"
+        const val AWS_IDENTITY_POOL_ID = "us-east-1:c0f53af8-6ed7-4a90-9578-0c4ec59dc131"
+        const val AWS_IDENTITY_DEVELOPER_PROVIDER_NAME = "ete-developer"
+        const val SOMETHING_WENT_WRONG = "Something went wrong"
+        val PROFILE_IMAGE_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/profile/"
+        val POST_IMAGE_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/post/images/"
+        val POST_VIDEO_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/post/videos/"
+        val JOURNAL_AUDIO_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/journal/audio/"
+        val JOURNAL_IMAGE_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/journal/images/"
+        val JOURNAL_VIDEO_PATH = "$AWS_ENVIRONMENT/${MyApplication.instance?.getUserData()?.userUniqueId}/journal/videos/"
     }
 
     //Force update key

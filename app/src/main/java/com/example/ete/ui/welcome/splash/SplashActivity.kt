@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.ete.R
-import com.example.ete.data.Constant
 import com.example.ete.data.Constant.ForceUpdate.FORCE_UPDATE
 import com.example.ete.data.Constant.ForceUpdate.OPTIONAL_UPDATE
 import com.example.ete.data.Constant.ForceUpdate.UP_TO_DATE
@@ -39,20 +37,22 @@ import com.example.ete.di.MyApplication
 import com.example.ete.theme.EteTheme
 import com.example.ete.ui.main.MainActivity
 import com.example.ete.ui.welcome.nav.AuthActivity
-import com.example.ete.util.Prefs
+import com.example.ete.util.prefs.Prefs
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
 
-    private val vm: SplashActivityVM by viewModels()
+    val vm: SplashActivityVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             EteTheme {
-                SplashScreen(this, vm)
+                SplashScreen(this)
             }
         }
 
@@ -126,58 +126,57 @@ class SplashActivity : ComponentActivity() {
         }
 
         //Init
-        MyApplication.instance?.callGetCountryList(vm)
-        MyApplication.instance?.callGetDropDownList(vm)
+        vm.callDropDown()
     }
-}
 
-@Composable
-@Preview(showSystemUi = true)
-fun Preview() {
-    SplashScreen(LocalContext.current, SplashActivityVM())
-}
-
-@Composable
-fun SplashScreen(context: Context, vm: SplashActivityVM) {
-
-    RequestPushNotificationPermission(context, vm)
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_app_logo_full),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier.size(200.dp),
-        )
+    @Composable
+    @Preview(showSystemUi = true)
+    fun Preview() {
+        SplashScreen(LocalContext.current)
     }
-}
 
-fun nextScreen(activity: Activity, vm: SplashActivityVM) {
-    if (MyApplication.instance?.getUserData()?.id == null) {
-        activity.startActivity(Intent(activity, AuthActivity::class.java))
-        activity.finish()
-    } else {
-        vm.callGetUserApi()
-    }
-}
+    @Composable
+    fun SplashScreen(context: Context) {
 
-@Composable
-fun RequestPushNotificationPermission(context: Context, vm: SplashActivityVM) {
+        RequestPushNotificationPermission(context)
 
-    val pushNotificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            vm.callCheckAppVersionAPI(context)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_app_logo_full),
+                contentDescription = stringResource(R.string.app_name),
+                modifier = Modifier.size(200.dp),
+            )
         }
     }
 
-    SideEffect {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    private fun nextScreen(activity: Activity, vm: SplashActivityVM) {
+        if (MyApplication.instance?.getUserData()?.id == null) {
+            activity.startActivity(Intent(activity, AuthActivity::class.java))
+            activity.finish()
         } else {
-            vm.callCheckAppVersionAPI(context)
+            vm.callGetUserApi()
+        }
+    }
+
+    @Composable
+    fun RequestPushNotificationPermission(context: Context) {
+
+        val pushNotificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                vm.callCheckAppVersionAPI(context)
+            }
+        }
+
+        SideEffect {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                vm.callCheckAppVersionAPI(context)
+            }
         }
     }
 }

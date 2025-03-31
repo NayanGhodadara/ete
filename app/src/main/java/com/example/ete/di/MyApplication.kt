@@ -3,6 +3,7 @@ package com.example.ete.di
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ete.data.Constant.PrefsKeys.AUTH_DATA
 import com.example.ete.data.Constant.PrefsKeys.USER_DATA
@@ -14,27 +15,22 @@ import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.ApiRepositoryImpl
 import com.example.ete.data.remote.helper.NetworkErrorHandler
 import com.example.ete.data.sqlite.SqliteHelper
-import com.example.ete.di.dagger.AppComponent
-import com.example.ete.di.dagger.DaggerAppComponent
-import com.example.ete.di.viewmodel.BaseViewModel
-import com.example.ete.ui.main.MainActivity
-import com.example.ete.util.Prefs
+import com.example.ete.ui.welcome.nav.AuthActivity
+import com.example.ete.util.prefs.Prefs
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
+@HiltAndroidApp
 class MyApplication : Application() {
-
-    private lateinit var appComponent: AppComponent
 
     lateinit var networkErrorHandler: NetworkErrorHandler
 
-    @Inject
-    lateinit var apiRepoImpl: ApiRepositoryImpl
-
+    //For AWS token call
+    var isApiCallRunning = false
 
     companion object {
         var instance: MyApplication? = null
@@ -49,9 +45,6 @@ class MyApplication : Application() {
         super.onCreate()
         instance = this
 
-        appComponent = DaggerAppComponent.builder().build()
-        appComponent.inject(myApplication = this)
-
         //SQLite
         SqliteHelper.initDatabaseInstance(this)
     }
@@ -60,7 +53,7 @@ class MyApplication : Application() {
     fun restartApp() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val intent = Intent(instance, MainActivity::class.java)
+                val intent = Intent(instance, AuthActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } catch (e: Exception) {
@@ -96,7 +89,7 @@ class MyApplication : Application() {
 
 
     //Call Drop Down Country API Call
-    fun callGetCountryList(vm: BaseViewModel) {
+    fun callGetCountryList(vm: ViewModel, apiRepoImpl: ApiRepositoryImpl) {
         vm.viewModelScope.launch {
             apiRepoImpl.getCountryList().collect {
                 Prefs.putString(COUNTRY_LIST, Gson().toJson(it.data?.data))
@@ -105,7 +98,7 @@ class MyApplication : Application() {
     }
 
     //Call Drop Down API Call
-    fun callGetDropDownList(vm: BaseViewModel) {
+    fun callGetDropDownList(vm: ViewModel, apiRepoImpl: ApiRepositoryImpl) {
 
         vm.viewModelScope.launch {
             apiRepoImpl.getDropDownList().collect {
