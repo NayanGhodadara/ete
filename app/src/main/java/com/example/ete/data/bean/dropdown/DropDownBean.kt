@@ -17,5 +17,8 @@ data class DropDownBean(
     var otherOption: String? = null,
 
     @SerializedName("label")
-    val label: String = ""
+    val label: String = "",
+
+    val isToggle: Boolean = false,
+    var isToggleSelected: Boolean = false,
 )

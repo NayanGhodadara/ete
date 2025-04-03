@@ -1,6 +1,7 @@
 package com.example.ete.ui.welcome.login
 
 import android.util.Patterns
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,10 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ete.R
+import com.example.ete.data.Constant.AuthScreen.LOGIN
+import com.example.ete.data.Constant.AuthScreen.OTP
+import com.example.ete.data.Constant.AuthScreen.WELCOME
 import com.example.ete.data.Constant.IntentObject.INTENT_AUTH_BEAN
 import com.example.ete.data.Constant.IntentObject.INTENT_IS_PHONE_AUTH
-import com.example.ete.data.Constant.Screen.OTP
 import com.example.ete.data.bean.auth.AuthBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.di.dialog.ShowCountryDialog
@@ -60,19 +63,25 @@ import com.example.ete.ui.welcome.nav.AuthOption
 import com.example.ete.util.AppUtils
 import com.example.ete.util.cookie.CookieBar
 import com.example.ete.util.cookie.CookieBarType
+import com.example.ete.util.progress.AnimatedCircularProgress
 import com.example.ete.util.span.CustomBuildAnnotatedString
 
 
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewLogin() {
-    LoginScreen()
+    LoginScreen(rememberNavController())
 }
 
 @Composable
-fun LoginScreen(navController: NavController? = null) {
+fun LoginScreen(navController: NavController) {
     val vm: AuthActivityVM = hiltViewModel()
 
+    BackHandler {
+        navController.navigate(WELCOME.name) {
+            popUpTo(LOGIN.name) { inclusive = false }
+        }
+    }
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val obrSendOtp by vm.obrSendOtp.observeAsState()
@@ -80,7 +89,7 @@ fun LoginScreen(navController: NavController? = null) {
     /** Field **/
     val email = remember { mutableStateOf("") }
     val phone = remember { mutableStateOf("") }
-    val isPhoneAuth = navController?.currentBackStackEntry?.arguments?.getBoolean(INTENT_IS_PHONE_AUTH) ?: false
+    val isPhoneAuth = navController.currentBackStackEntry?.arguments?.getBoolean(INTENT_IS_PHONE_AUTH) ?: false
     val statePhone = remember { mutableStateOf(isPhoneAuth) }
     val errorMsg = remember { mutableStateOf("") }
     val countryField = remember { mutableStateOf(AppUtils.getDefaultCountry(context).getPlusCode()) }
@@ -344,13 +353,14 @@ fun LoginScreen(navController: NavController? = null) {
                 )
 
                 if (vm.isLoading.value) {
-                    CircularProgressIndicator(
+                    Column(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(24.dp),
-                        strokeWidth = 3.dp,
-                        color = white
-                    )
+                            .fillMaxWidth()
+                            .align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        AnimatedCircularProgress()
+                    }
                 }
             }
 
@@ -440,10 +450,13 @@ fun LoginScreen(navController: NavController? = null) {
             authBean.successMessage = obrSendOtp?.data?.message.orEmpty()
             authBean.orderId = obrSendOtp?.data?.data?.orderId.orEmpty()
 
-            navController?.currentBackStackEntry
+            navController.currentBackStackEntry
                 ?.savedStateHandle
                 ?.set(INTENT_AUTH_BEAN, authBean)
-            navController?.navigate(OTP.name)
+
+            navController.navigate(OTP.name) {
+                popUpTo(LOGIN.name) { inclusive = true }
+            }
         }
 
         Status.WARN -> {

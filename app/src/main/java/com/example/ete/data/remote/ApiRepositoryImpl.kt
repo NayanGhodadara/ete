@@ -69,6 +69,36 @@ class ApiRepositoryImpl @Inject constructor(private val apiInterface: ApiInterfa
         }
     }
 
+    fun logout(data: HashMap<String, Any>): Flow<Resource<ApiResponse<Any>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.logoutAsync(data).await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    fun deleteAccount(): Flow<Resource<ApiResponse<Any>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.deleteAccountAsync().await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
 
     /** User **/
     fun getUserAsync(): Flow<Resource<ApiResponse<UserBean>>> = flow {

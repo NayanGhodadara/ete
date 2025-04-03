@@ -1,6 +1,7 @@
 package com.example.ete.ui.welcome
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,13 +21,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ete.R
 import com.example.ete.data.Constant.ApiObject.GOOGLE
+import com.example.ete.data.Constant.AuthScreen.LOGIN
+import com.example.ete.data.Constant.AuthScreen.WELCOME
 import com.example.ete.data.Constant.IntentObject.INTENT_IS_PHONE_AUTH
-import com.example.ete.data.Constant.Screen.LOGIN
 import com.example.ete.data.bean.auth.AuthBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.theme.white
+import com.example.ete.ui.welcome.nav.AuthActivity
 import com.example.ete.ui.welcome.nav.AuthActivityVM
 import com.example.ete.ui.welcome.nav.AuthOption
 import com.example.ete.util.cookie.CookieBar
@@ -39,14 +43,18 @@ import com.google.android.gms.common.api.ApiException
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewWelcome() {
-    WelcomeScreen(null)
+    WelcomeScreen(rememberNavController())
 }
 
 @Composable
-fun WelcomeScreen(navController: NavController? = null) {
+fun WelcomeScreen(navController: NavController) {
     val vm: AuthActivityVM = hiltViewModel()
     val context = LocalContext.current
     val obrSocialLogin = vm.obrSocialLogin.value
+
+    BackHandler {
+        (context as AuthActivity).finishAffinity()
+    }
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -92,7 +100,9 @@ fun WelcomeScreen(navController: NavController? = null) {
                 stringResource(R.string.continue_with_email),
                 painterResource(R.drawable.ic_email),
                 onClick = {
-                    navController?.navigate("${LOGIN.name}?$INTENT_IS_PHONE_AUTH=false}")
+                    navController.navigate("${LOGIN.name}?$INTENT_IS_PHONE_AUTH=false}") {
+                        popUpTo(WELCOME.name) { inclusive = true }
+                    }
                 }
             )
 
@@ -101,7 +111,9 @@ fun WelcomeScreen(navController: NavController? = null) {
                 stringResource(R.string.continue_with_phone_no),
                 painterResource(R.drawable.ic_phone),
                 onClick = {
-                    navController?.navigate("${LOGIN.name}?$INTENT_IS_PHONE_AUTH=true")
+                    navController.navigate("${LOGIN.name}?$INTENT_IS_PHONE_AUTH=true") {
+                        popUpTo(WELCOME.name) { inclusive = true }
+                    }
                 }
             )
 
@@ -140,7 +152,8 @@ fun WelcomeScreen(navController: NavController? = null) {
     }
 }
 
-private fun getGoogleSignInOptions(context : Context): GoogleSignInOptions {
+@Suppress("DEPRECATION")
+private fun getGoogleSignInOptions(context: Context): GoogleSignInOptions {
     return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestIdToken(context.getString(R.string.google_oauth_client_id))
         .requestEmail()

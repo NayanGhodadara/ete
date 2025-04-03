@@ -25,6 +25,7 @@ val whiteV2 = hexToColor("#E6E6E6")
 
 
 val black = hexToColor("#000000")
+val black_8 = hexToColor("#00000014")
 val black_10 = hexToColor("#1A000000")
 
 val gray = hexToColor("#F2F2F2")

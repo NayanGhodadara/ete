@@ -19,10 +19,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ete.data.Constant.IntentObject.INTENT_IS_FIRST_TIME
 import com.example.ete.data.Constant.IntentObject.INTENT_IS_PHONE_AUTH
-import com.example.ete.data.Constant.Screen.CREATE_ACCOUNT
-import com.example.ete.data.Constant.Screen.LOGIN
-import com.example.ete.data.Constant.Screen.OTP
-import com.example.ete.data.Constant.Screen.WELCOME
+import com.example.ete.data.Constant.AuthScreen.CREATE_ACCOUNT
+import com.example.ete.data.Constant.AuthScreen.LOGIN
+import com.example.ete.data.Constant.AuthScreen.OTP
+import com.example.ete.data.Constant.AuthScreen.WELCOME
 import com.example.ete.theme.EteTheme
 import com.example.ete.ui.welcome.WelcomeScreen
 import com.example.ete.ui.welcome.createAccount.CreateAccountScreen
@@ -76,7 +76,7 @@ class AuthActivity : ComponentActivity() {
 
             if (isFirstTime) {
                 navController.navigate(CREATE_ACCOUNT.name) {
-                    popUpTo(CREATE_ACCOUNT.name) {
+                    popUpTo(WELCOME.name) {
                         inclusive = true
                     }
                 }

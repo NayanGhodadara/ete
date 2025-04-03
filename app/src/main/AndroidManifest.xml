@@ -54,6 +54,11 @@
             android:name=".ui.main.MainActivity"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Setting -->
+        <activity
+            android:name=".ui.main.profile.setting.SettingActivity"
+            android:windowSoftInputMode="adjustResize" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -61,7 +66,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_path"/>
+                android:resource="@xml/provider_path" />
         </provider>
     </application>
 </manifest>

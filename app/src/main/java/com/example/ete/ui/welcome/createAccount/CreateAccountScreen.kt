@@ -34,7 +34,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -42,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,13 +63,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.ete.R
+import com.example.ete.data.Constant.AuthScreen.CREATE_ACCOUNT
+import com.example.ete.data.Constant.AuthScreen.WELCOME
 import com.example.ete.data.Constant.Gender.FEMALE
 import com.example.ete.data.Constant.Gender.MALE
 import com.example.ete.data.Constant.Gender.OTHER
-import com.example.ete.data.Constant.Screen.CREATE_ACCOUNT
-import com.example.ete.data.Constant.Screen.WELCOME
 import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.helper.Status
@@ -85,26 +86,29 @@ import com.example.ete.theme.red
 import com.example.ete.theme.white
 import com.example.ete.ui.main.MainActivity
 import com.example.ete.ui.welcome.nav.AuthActivityVM
+import com.example.ete.util.AppUtils.copyImageToAppStorage
 import com.example.ete.util.AppUtils.createImageUri
 import com.example.ete.util.cookie.CookieBar
 import com.example.ete.util.cookie.CookieBarType
+import com.example.ete.util.progress.AnimatedCircularProgress
 import com.example.ete.util.span.CustomBuildAnnotatedString
 import kotlinx.coroutines.delay
 
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewCreateAccount() {
-    CreateAccountScreen(navController = null)
+    CreateAccountScreen(rememberNavController())
 }
 
 @Composable
-fun CreateAccountScreen(navController: NavController? = null) {
+fun CreateAccountScreen(navController: NavController) {
     val vm: AuthActivityVM = hiltViewModel()
+
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val obrCreateAccount = vm.obrCreateAccount.value
-    val obrUpload = vm.obrUpload.value
+    val obrCreateAccount by vm.obrCreateAccount.observeAsState()
+    val obrUpload by vm.obrUpload.observeAsState()
 
     /**
      *  Field
@@ -152,7 +156,7 @@ fun CreateAccountScreen(navController: NavController? = null) {
         if (isGranted) {
             val uri = createImageUri(context)
             tempUri.value = uri
-            uri?.let { imageLauncher.launch(it) }
+            uri.let { imageLauncher.launch(it) }
         } else {
             if (showPermissionDialog.value.not()) {
                 showPermissionDialog.value = true
@@ -188,7 +192,7 @@ fun CreateAccountScreen(navController: NavController? = null) {
     )
 
     BackHandler {
-        navController?.navigate(WELCOME.name) {
+        navController.navigate(WELCOME.name) {
             popUpTo(CREATE_ACCOUNT.name) { inclusive = true }
         }
     }
@@ -299,7 +303,7 @@ fun CreateAccountScreen(navController: NavController? = null) {
                         if (isCameraPermissionGrant) {
                             val uri = createImageUri(context)
                             tempUri.value = uri
-                            uri?.let { imageLauncher.launch(it) }
+                            uri.let { imageLauncher.launch(it) }
                         } else {
                             cameraPermissionLauncher.launch(CAMERA)
                         }
@@ -932,7 +936,7 @@ fun CreateAccountScreen(navController: NavController? = null) {
                             userBean.link = linkField.value.trim()
                             userBean.country = countryBean.value
                             userBean.bio = bioField.value.trim()
-                            userBean.profilePic = imageUri.value?.path.orEmpty()
+                            userBean.profilePic = imageUri.value?.let { copyImageToAppStorage(context, it) }
                             vm.userBean = userBean
                             if (imageUri.value != null) {
                                 vm.uploadProfileImage(context)
@@ -946,13 +950,14 @@ fun CreateAccountScreen(navController: NavController? = null) {
             )
 
             if (vm.isLoading.value) {
-                CircularProgressIndicator(
+                Column(
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(24.dp),
-                    strokeWidth = 3.dp,
-                    color = white
-                )
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedCircularProgress()
+                }
             }
         }
     }
@@ -972,25 +977,23 @@ fun CreateAccountScreen(navController: NavController? = null) {
         }
 
         Status.SUCCESS -> {
-            vm.userBean.profilePic = obrUpload.data
+            vm.userBean.profilePic = obrUpload?.data
             vm.callCreateAccountApi()
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrUpload.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrUpload?.message.orEmpty(), CookieBarType.ERROR)
 
         }
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrUpload.message.orEmpty(), CookieBarType.WARNING)
-
+            CookieBar(obrUpload?.message.orEmpty(), CookieBarType.WARNING)
         }
 
         else -> {}
     }
-
 
     when (obrCreateAccount?.status) {
         Status.LOADING -> {
@@ -999,18 +1002,18 @@ fun CreateAccountScreen(navController: NavController? = null) {
 
         Status.SUCCESS -> {
             vm.isLoading.value = false
-            context.startActivity(Intent(context, MainActivity::class.java))
             activity?.finishAffinity()
+            context.startActivity(Intent(context, MainActivity::class.java))
         }
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrCreateAccount.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrCreateAccount?.message.orEmpty(), CookieBarType.WARNING)
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrCreateAccount.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrCreateAccount?.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}

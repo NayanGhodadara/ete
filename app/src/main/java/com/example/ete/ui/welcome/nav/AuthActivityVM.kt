@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
@@ -114,7 +116,7 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
         rqMap[OTP] = authBean.otp
 
         apiRepoImpl.verifyOtpAsync(rqMap).collect {
-            _obrVerify.value = it
+            _obrVerify.postValue(it)
         }
     }
 
@@ -139,7 +141,7 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
             rqMap[PROFILE_PIC] = userBean.profilePic.orEmpty()
 
         apiRepoImpl.updateProfile(rqMap).collect {
-            _obrCreateAccount.value = it
+            _obrCreateAccount.postValue(it)
         }
     }
 
@@ -147,66 +149,70 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
     private val _obrUpload: MutableLiveData<Resource<String>> = SingleLiveEvent()
     val obrUpload: LiveData<Resource<String>> get() = _obrUpload
     fun uploadProfileImage(context: Context) {
-        _obrUpload.value = Resource.loading(null)
+        _obrUpload.postValue(Resource.loading(null))
 
         AppUtils.callAWSTokenAPI(apiRepoImpl = apiRepoImpl, callback = {
             if (it) {
-                val path = File(userBean.profilePic.orEmpty())
+                try {
+                    val path = File(userBean.profilePic.orEmpty())
 
-                TransferNetworkLossHandler.getInstance(context)
-                val developerProvider = DeveloperAuthenticationProvider(apiRepoImpl, null, AWS_IDENTITY_POOL_ID, Regions.US_EAST_1)
-                val credentialsProvider = CognitoCachingCredentialsProvider(context, developerProvider, Regions.US_EAST_1)
-                val s3Client: AmazonS3 = AmazonS3Client(credentialsProvider, Region.getRegion(AWS_REGION))
-                val transferUtility = TransferUtility.builder().s3Client(s3Client).context(context).build()
+                    TransferNetworkLossHandler.getInstance(context)
+                    val developerProvider = DeveloperAuthenticationProvider(apiRepoImpl, null, AWS_IDENTITY_POOL_ID, Regions.US_EAST_1)
+                    val credentialsProvider = CognitoCachingCredentialsProvider(context, developerProvider, Regions.US_EAST_1)
+                    val s3Client: AmazonS3 = AmazonS3Client(credentialsProvider, Region.getRegion(AWS_REGION))
+                    val transferUtility = TransferUtility.builder().s3Client(s3Client).context(context).build()
 
-                val observer = transferUtility.upload(
-                    STORAGE_NAME,
-                    PROFILE_IMAGE_PATH + path.name,
-                    path
-                )
+                    val observer = transferUtility.upload(
+                        STORAGE_NAME,
+                        PROFILE_IMAGE_PATH + path.name,
+                        path
+                    )
 
-                observer.setTransferListener(object : TransferListener {
-                    override fun onStateChanged(id: Int, state: TransferState) {
-                        when (state) {
-                            //Success
-                            TransferState.COMPLETED -> {
-                                MyApplication.instance?.loggerE("::::: SUCCESS")
-                                val url = "https://$STORAGE_NAME.s3.$AWS_REGION.amazonaws.com/$PROFILE_IMAGE_PATH${path.name}"
-                                _obrUpload.value = Resource.success(url)
+                    observer.setTransferListener(object : TransferListener {
+                        override fun onStateChanged(id: Int, state: TransferState) {
+                            when (state) {
+                                //Success
+                                TransferState.COMPLETED -> {
+                                    MyApplication.instance?.loggerE("::::: SUCCESS")
+                                    val url = "https://$STORAGE_NAME.s3.$AWS_REGION.amazonaws.com/$PROFILE_IMAGE_PATH${path.name}"
+                                    _obrUpload.postValue(Resource.success(url))
+                                }
+
+                                //Failed
+                                TransferState.FAILED -> {
+                                    _obrUpload.postValue(Resource.warn(null, SOMETHING_WENT_WRONG))
+                                    MyApplication.instance?.loggerE("::::: FAIL")
+                                }
+
+                                //Other
+                                TransferState.WAITING -> {}
+                                TransferState.IN_PROGRESS -> {}
+                                TransferState.PAUSED -> {}
+                                TransferState.RESUMED_WAITING -> {}
+                                TransferState.CANCELED -> {}
+                                TransferState.WAITING_FOR_NETWORK -> {}
+                                TransferState.PART_COMPLETED -> {}
+                                TransferState.PENDING_CANCEL -> {}
+                                TransferState.PENDING_PAUSE -> {}
+                                TransferState.PENDING_NETWORK_DISCONNECT -> {}
+                                TransferState.UNKNOWN -> {}
                             }
-
-                            //Failed
-                            TransferState.FAILED -> {
-                                _obrUpload.value = Resource.warn(null, SOMETHING_WENT_WRONG)
-                                MyApplication.instance?.loggerE("::::: FAIL")
-                            }
-
-                            //Other
-                            TransferState.WAITING -> {}
-                            TransferState.IN_PROGRESS -> {}
-                            TransferState.PAUSED -> {}
-                            TransferState.RESUMED_WAITING -> {}
-                            TransferState.CANCELED -> {}
-                            TransferState.WAITING_FOR_NETWORK -> {}
-                            TransferState.PART_COMPLETED -> {}
-                            TransferState.PENDING_CANCEL -> {}
-                            TransferState.PENDING_PAUSE -> {}
-                            TransferState.PENDING_NETWORK_DISCONNECT -> {}
-                            TransferState.UNKNOWN -> {}
                         }
-                    }
 
-                    override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-                        Log.e("AWS", "onProgressChanged === $bytesTotal == $bytesCurrent")
-                    }
+                        override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
+                            Log.e("AWS", "onProgressChanged === $bytesTotal == $bytesCurrent")
+                        }
 
-                    override fun onError(id: Int, ex: Exception) {
-                        _obrUpload.value = Resource.warn(null, ex.message.toString())
-                        MyApplication.instance?.loggerE("::::: ERROR : ${ex.message}")
-                    }
-                })
+                        override fun onError(id: Int, ex: Exception) {
+                            _obrUpload.postValue(Resource.warn(null, ex.message.toString()))
+                            MyApplication.instance?.loggerE("::::: ERROR : ${ex.message}")
+                        }
+                    })
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             } else {
-                _obrUpload.value = Resource.warn(null, SOMETHING_WENT_WRONG)
+                _obrUpload.postValue(Resource.warn(null, SOMETHING_WENT_WRONG))
             }
         })
     }

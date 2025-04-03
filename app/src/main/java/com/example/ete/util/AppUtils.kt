@@ -1,11 +1,15 @@
 package com.example.ete.util
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.example.ete.data.Constant.PrefsKeys.AWS_TOKEN
 import com.example.ete.data.Constant.PrefsKeys.IDENTITY_ID
 import com.example.ete.data.bean.ApiResponse
@@ -16,6 +20,7 @@ import com.example.ete.data.remote.helper.ApiCallback
 import com.example.ete.di.MyApplication
 import com.example.ete.util.prefs.Prefs
 import retrofit2.Response
+import java.io.File
 import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
@@ -23,17 +28,39 @@ import kotlin.math.pow
 
 object AppUtils {
 
-    fun createImageUri(context: Context): Uri? {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera") // Save to DCIM folder
+    fun copyImageToAppStorage(context: Context, uri: Uri): String? {
+        val appDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ETE")
+        if (!appDir.exists()) appDir.mkdirs()  // Create directory if it doesn't exist
+
+        val fileName = "IMG_${System.currentTimeMillis()}.jpg"
+        val newFile = File(appDir, fileName)
+
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                newFile.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            newFile.absolutePath  // Return the new absolute path
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
+    fun createImageUri(context: Context): Uri {
+        val appSpecificDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ETE")
+
+        // Ensure the directory exists
+        if (!appSpecificDir.exists()) {
+            appSpecificDir.mkdirs()
         }
 
-        return context.contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
+        val fileName = "IMG_${System.currentTimeMillis()}.jpg"
+        val imageFile = File(appSpecificDir, fileName)
+
+        return Uri.fromFile(imageFile)
     }
 
     fun getDefaultCountry(context: Context): CountryBean {
@@ -45,6 +72,12 @@ object AppUtils {
             e.printStackTrace()
             CountryBean("in", "91", "India")
         }
+    }
+
+    //Get device id
+    @SuppressLint("HardwareIds")
+    fun getDeviceId(c: Context): String {
+        return Settings.Secure.getString(c.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     //Country list

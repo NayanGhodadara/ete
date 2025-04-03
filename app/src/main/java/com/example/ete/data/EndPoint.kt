@@ -16,6 +16,7 @@ object EndPoint {
         const val SEND_OTP: String = "${V1}send-otp"
         const val VERIFY_OTP: String = "${V1}verify-otp"
         const val SOCIAL_LOGIN: String = "${V1}social-login"
+        const val LOGOUT: String = "${V1}logout"
     }
 
     //User end point

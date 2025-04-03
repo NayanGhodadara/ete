@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "426870800509",
+    "project_id": "ete-app-2ff75",
+    "storage_bucket": "ete-app-2ff75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426870800509:android:32bb2bc21180dde4677114",
+        "android_client_info": {
+          "package_name": "com.example.ete"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426870800509-t7rklm0vf9i7kfhvfu14htnf9hu2p3us.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ete",
+            "certificate_hash": "e1f8ff9adfa6c060e17dfaeae3d0593b17e8ce08"
+          }
+        },
+        {
+          "client_id": "426870800509-18poup46rp2se83aaquo7ukt6nv83qg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxkvSm-ungZtXwb4O_f8zTFz1FuyAI33c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426870800509-18poup46rp2se83aaquo7ukt6nv83qg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

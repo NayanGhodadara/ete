@@ -2,6 +2,7 @@ package com.example.ete.ui.welcome.otp
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,11 +48,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.ete.R
+import com.example.ete.data.Constant.AuthScreen.CREATE_ACCOUNT
+import com.example.ete.data.Constant.AuthScreen.LOGIN
+import com.example.ete.data.Constant.AuthScreen.OTP
 import com.example.ete.data.Constant.IntentObject.INTENT_AUTH_BEAN
 import com.example.ete.data.Constant.PrefsKeys.AUTH_DATA
 import com.example.ete.data.Constant.PrefsKeys.USER_DATA
-import com.example.ete.data.Constant.Screen.CREATE_ACCOUNT
 import com.example.ete.data.bean.auth.AuthBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.theme.black
@@ -66,6 +69,7 @@ import com.example.ete.ui.welcome.nav.AuthActivityVM
 import com.example.ete.util.cookie.CookieBar
 import com.example.ete.util.cookie.CookieBarType
 import com.example.ete.util.prefs.Prefs
+import com.example.ete.util.progress.AnimatedCircularProgress
 import com.example.ete.util.span.CustomBuildAnnotatedString
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
@@ -73,17 +77,23 @@ import kotlinx.coroutines.delay
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewOtp() {
-    OtpScreen()
+    OtpScreen(rememberNavController())
 }
 
 @Composable
-fun OtpScreen(navController: NavController? = null) {
+fun OtpScreen(navController: NavController) {
     val vm: AuthActivityVM = hiltViewModel()
+
+    BackHandler {
+        navController.navigate(LOGIN.name) {
+            popUpTo(OTP.name) { inclusive = true }
+        }
+    }
 
     val obrSendOtp by vm.obrSendOtp.observeAsState()
     val obrVerify by vm.obrVerify.observeAsState()
 
-    val authBean = navController?.previousBackStackEntry
+    val authBean = navController.previousBackStackEntry
         ?.savedStateHandle
         ?.get<AuthBean>(INTENT_AUTH_BEAN)
 
@@ -272,7 +282,7 @@ fun OtpScreen(navController: NavController? = null) {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
                 ) {
-                    navController?.popBackStack()
+                    navController.popBackStack()
                 }
         )
 
@@ -370,13 +380,14 @@ fun OtpScreen(navController: NavController? = null) {
                 textAlign = TextAlign.Center,
             )
             if (vm.isLoading.value) {
-                CircularProgressIndicator(
+                Column(
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(24.dp),
-                    strokeWidth = 3.dp,
-                    color = white
-                )
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedCircularProgress()
+                }
             }
         }
     }
@@ -423,8 +434,8 @@ fun OtpScreen(navController: NavController? = null) {
                 //startNewActivity(SuspendAccountActivity.newIntent(this))
             } else {
                 if (userData?.isFirstTime == true) {
-                    navController?.navigate(CREATE_ACCOUNT.name) {
-                        navController.graph.startDestinationId.let { popUpTo(it) { inclusive = true } }
+                    navController.navigate(CREATE_ACCOUNT.name) {
+                        popUpTo(OTP.name) { inclusive = true }
                     }
                 } else {
                     val intent = Intent(context, MainActivity::class.java)

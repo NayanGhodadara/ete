@@ -76,8 +76,47 @@
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="camera">Camera</string>
     <string name="cancel">Cancel</string>
-    <string name="confirm">Confirm</string>
     <string name="please_enter_username">Please enter username</string>
     <string name="please_select_country">Please select country</string>
     <string name="please_select_date_of_birth">Please select date of birth</string>
+
+    <!--Main-->
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="my_journal">My journal</string>
+    <string name="profile">Profile</string>
+
+    <!--Profile-->
+    <string name="posts">Posts</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="share_profile">Share profile</string>
+    <string name="settings">Settings</string>
+
+
+    <!-- Setting   -->
+    <string name="leaderboard">Leaderboard</string>
+    <string name="notification">Notification</string>
+    <string name="blocked_user">Blocked user</string>
+    <string name="privacy_and_Policy">Privacy &amp; Policy</string>
+    <string name="help">Help</string>
+    <string name="disable_account">Disable account</string>
+    <string name="logout">Logout</string>
+    <string name="logout_ask">Logout?</string>
+    <string name="disable_account_ask">Disable account?</string>
+    <string name="delete_ask">Delete?</string>
+    <string name="delete">delete</string>
+    <string name="Delete">Delete</string>
+    <string name="type_delete_to_confirm">Type “delete” to confirm</string>
+    <string name="enter_here">Enter here</string>
+    <string name="confirm">Confirm</string>
+    <string name="go_back"><u>Go back</u></string>
+    <string name="want_to_delete_your_account"><u>Want to delete your account?</u></string>
+    <string name="are_you_sure_you_want_to_logout_your_account">Are you sure you want to logout your account?</string>
+    <string name="are_you_sure_you_went_disable_account">Are you sure you want to disable your account? If disabled, you\'ll need to enable it again to access the app\'s functions?</string>
+    <string name="Report_a_problem">Report a problem</string>
+    <string name="support_request">Support request</string>
+    <string name="help_center">Help center</string>
+    <string name="please_enter_delete">Please enter delete</string>
 </resources>

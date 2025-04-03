@@ -11,6 +11,7 @@ import com.example.ete.data.bean.user.UserBean
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -27,6 +28,10 @@ interface ApiInterface {
     @POST(EndPoint.Auth.SOCIAL_LOGIN)
     fun socialLoginAsync(@Body data: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<UserBean>>>
 
+    @POST(EndPoint.Auth.LOGOUT)
+    fun logoutAsync(@Body hashMap: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<Any>>>
+
+
     /** User **/
     @GET(EndPoint.User.USERS)
     fun getUserAsync(): Deferred<Response<ApiResponse<UserBean>>>
@@ -36,6 +41,9 @@ interface ApiInterface {
 
     @GET(EndPoint.DropDown.COUNTRY_LIST)
     fun getCountryListAsync(): Deferred<Response<ApiResponse<ArrayList<CountryBean>>>>
+
+    @DELETE(EndPoint.User.USERS)
+    fun deleteAccountAsync(): Deferred<Response<ApiResponse<Any>>>
 
     /** DropDownList **/
     @GET(EndPoint.DropDown.DROP_DOWN_LIST)

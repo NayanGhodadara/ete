@@ -11,6 +11,8 @@ import com.example.ete.data.EndPoint.DropDown.COUNTRY_LIST
 import com.example.ete.data.EndPoint.DropDown.DROP_DOWN_LIST
 import com.example.ete.data.bean.Authentication
 import com.example.ete.data.bean.country.CountryBean
+import com.example.ete.data.bean.dropdown.DropDownBean
+import com.example.ete.data.bean.dropdown.DropDownListBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.ApiRepositoryImpl
 import com.example.ete.data.remote.helper.NetworkErrorHandler
@@ -85,6 +87,15 @@ class MyApplication : Application() {
             Gson().fromJson(Prefs.getString(COUNTRY_LIST, ""), object : TypeToken<ArrayList<CountryBean>>() {}.type)
         else
             ArrayList()
+    }
+
+
+    //Get dropDown detail
+    fun getDropDownList(): DropDownListBean {
+        return if (Prefs.contains(DROP_DOWN_LIST))
+            Gson().fromJson(Prefs.getString(DROP_DOWN_LIST, ""), object : TypeToken<DropDownListBean>() {}.type)
+        else
+            DropDownListBean()
     }
 
 

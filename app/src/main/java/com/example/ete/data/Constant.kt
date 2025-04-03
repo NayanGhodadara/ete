@@ -12,6 +12,7 @@ object Constant {
         const val AUTH_DATA: String = "authData"
         const val IDENTITY_ID: String = "identityId"
         const val AWS_TOKEN: String = "awsToken"
+        const val DEVICE_ID = "deviceId"
     }
 
     //Intent keys
@@ -160,10 +161,18 @@ object Constant {
         const val OTHER = "Other"
     }
 
-    enum class Screen {
+    enum class AuthScreen {
         WELCOME,
         LOGIN,
         OTP,
         CREATE_ACCOUNT
+    }
+
+    enum class MainScreen {
+        HOME,
+        SEARCH,
+        ADD,
+        MY_JOURNAL,
+        PROFILE
     }
 }
