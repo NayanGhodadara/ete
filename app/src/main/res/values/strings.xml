@@ -18,6 +18,33 @@
     <string name="permission_required">Permission required</string>
     <string name="camera_gallery_permission">Camera and Storage permission needed. Go to android setting and allow access.</string>
 
+    <!-- Date Time Utils -->
+    <string name="time_ago_now">few moments ago</string>
+    <string name="time_ago_full_seconds">%1$d seconds ago</string>
+    <string name="time_ago_full_minute">%1$d minute ago</string>
+    <string name="time_ago_full_minutes">%1$d minutes ago</string>
+    <string name="time_ago_full_hour">%1$d hour ago</string>
+    <string name="time_ago_full_hours">%1$d hours ago</string>
+    <string name="time_ago_full_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_full_days">%1$d days ago</string>
+    <string name="time_ago_full_month">%1$d month ago</string>
+    <string name="time_ago_full_months">%1$d months ago</string>
+
+    <string name="time_ago_seconds">%1$dsec ago</string>
+    <string name="time_ago_minute">%1$dmin ago</string>
+    <string name="time_ago_minutes">%1$dmin ago</string>
+    <string name="time_ago_hour">%1$dh ago</string>
+    <string name="time_ago_hours">%1$dh ago</string>
+    <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="time_ago_days">%1$dd ago</string>
+    <string name="time_ago_month">%1$dm ago</string>
+    <string name="time_ago_months">%1$dm ago</string>
+
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!--Welcome-->
     <string name="continue_with_email">Continue with Email</string>
@@ -50,7 +77,9 @@
 
     <!-- Create profile -->
     <string name="create_your_profile">Create your profile</string>
+    <string name="save">Save</string>
     <string name="add_profile_picture">Add profile picture</string>
+    <string name="edit_profile_picture">Edit profile picture</string>
     <string name="enter_name">Enter name</string>
     <string name="enter_title">Enter title</string>
     <string name="enter_username">Enter username</string>
@@ -119,4 +148,16 @@
     <string name="support_request">Support request</string>
     <string name="help_center">Help center</string>
     <string name="please_enter_delete">Please enter delete</string>
+
+    <!-- Search -->
+    <string name="account">Account</string>
+    <string name="for_you">For You</string>
+    <string name="bookmark">Bookmarks</string>
+    <string name="hashtags">Hashtags</string>
+    <string name="plant">Plant</string>
+    <string name="plants">Plants</string>
+    <string name="seed">Seed</string>
+    <string name="seeds">Seeds</string>
+    <string name="sapling">Sapling</string>
+    <string name="explore">Explore</string>
 </resources>

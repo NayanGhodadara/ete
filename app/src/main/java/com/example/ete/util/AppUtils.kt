@@ -52,7 +52,6 @@ object AppUtils {
     fun createImageUri(context: Context): Uri {
         val appSpecificDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ETE")
 
-        // Ensure the directory exists
         if (!appSpecificDir.exists()) {
             appSpecificDir.mkdirs()
         }
@@ -60,7 +59,12 @@ object AppUtils {
         val fileName = "IMG_${System.currentTimeMillis()}.jpg"
         val imageFile = File(appSpecificDir, fileName)
 
-        return Uri.fromFile(imageFile)
+        // Return FileProvider URI
+        return FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider", // Must match your Manifest
+            imageFile
+        )
     }
 
     fun getDefaultCountry(context: Context): CountryBean {

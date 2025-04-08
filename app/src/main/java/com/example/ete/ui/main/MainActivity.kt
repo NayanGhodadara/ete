@@ -52,7 +52,9 @@ import com.example.ete.ui.main.home.HomeScreen
 import com.example.ete.ui.main.journal.JournalScreen
 import com.example.ete.ui.main.profile.ProfileScreen
 import com.example.ete.ui.main.search.SearchScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val vm: MainActivityVM by viewModels()

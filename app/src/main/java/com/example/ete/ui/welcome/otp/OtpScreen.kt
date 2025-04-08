@@ -447,12 +447,12 @@ fun OtpScreen(navController: NavController) {
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrVerify?.message.orEmpty(), CookieBarType.WARNING)
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrVerify?.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}

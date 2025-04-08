@@ -105,6 +105,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.compose.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -168,4 +171,8 @@ dependencies {
     implementation(libs.com.google.firebase.firebase.crashlytics.ktx2)
     implementation(libs.com.google.firebase.firebase.analytics.ktx2)
     implementation(libs.com.google.firebase.firebase.auth.ktx2)
+
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.accompanist.swiperefresh)
+    implementation("com.google.accompanist:accompanist-placeholder-material3:0.34.0")
 }

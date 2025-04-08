@@ -1,6 +1,7 @@
 package com.example.ete.data
 
 import com.example.ete.BuildConfig
+import com.example.ete.data.Constant.ApiObject.USER_ID
 import com.example.ete.data.EndPoint.URLs.V1
 
 object EndPoint {
@@ -22,6 +23,12 @@ object EndPoint {
     //User end point
     object User {
         const val USERS: String = "${V1}users"
+        const val BLOCK_USERS: String = "${USERS}/blocked-users"
+        const val BLOCK_UNBLOCK: String = "${USERS}/block-unblock/{$USER_ID}"
+        const val USER_POST: String = "${USERS}/post"
+        const val REPORT_USER = "$USERS/report"
+        const val OTHER_USER: String = "${USERS}/another-user/{$USER_ID}"
+        const val OTHER_USER_POST: String = "${USERS}/another-user-post/{$USER_ID}"
     }
 
     //DropDownList end point

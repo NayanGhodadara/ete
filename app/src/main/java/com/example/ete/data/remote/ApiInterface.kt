@@ -6,6 +6,7 @@ import com.example.ete.data.bean.ApiResponse
 import com.example.ete.data.bean.aws.AWSBean
 import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.otp.OtpBean
+import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.bean.update.UpdateBean
 import com.example.ete.data.bean.user.UserBean
 import kotlinx.coroutines.Deferred
@@ -15,6 +16,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.QueryMap
 
 interface ApiInterface {
 
@@ -31,6 +33,8 @@ interface ApiInterface {
     @POST(EndPoint.Auth.LOGOUT)
     fun logoutAsync(@Body hashMap: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<Any>>>
 
+    @GET(EndPoint.User.USER_POST)
+    fun getUserPost(@QueryMap data: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<ArrayList<PostBean>>>>
 
     /** User **/
     @GET(EndPoint.User.USERS)

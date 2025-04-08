@@ -71,6 +71,7 @@ import com.example.ete.data.Constant.AuthScreen.WELCOME
 import com.example.ete.data.Constant.Gender.FEMALE
 import com.example.ete.data.Constant.Gender.MALE
 import com.example.ete.data.Constant.Gender.OTHER
+import com.example.ete.data.Constant.PrefsKeys.USER_DATA
 import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.helper.Status
@@ -90,8 +91,10 @@ import com.example.ete.util.AppUtils.copyImageToAppStorage
 import com.example.ete.util.AppUtils.createImageUri
 import com.example.ete.util.cookie.CookieBar
 import com.example.ete.util.cookie.CookieBarType
+import com.example.ete.util.prefs.Prefs
 import com.example.ete.util.progress.AnimatedCircularProgress
 import com.example.ete.util.span.CustomBuildAnnotatedString
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 
 @Preview(showSystemUi = true)
@@ -255,7 +258,7 @@ fun CreateAccountScreen(navController: NavController) {
             && dobField.value.isEmpty().not()
         ) {
             if (linkField.value.trim().isNotEmpty()) {
-                if (URLUtil.isValidUrl(linkField.value.trim()).not()) {
+                if (URLUtil.isValidUrl(linkField.value.trim())) {
                     onSuccess()
                 }
             } else {
@@ -285,15 +288,7 @@ fun CreateAccountScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 36.dp)
-                    .padding(horizontal = 24.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        if (showImagePicker.value.not()) {
-                            showImagePicker.value = true
-                        }
-                    },
+                    .padding(horizontal = 24.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -1003,6 +998,7 @@ fun CreateAccountScreen(navController: NavController) {
         Status.SUCCESS -> {
             vm.isLoading.value = false
             activity?.finishAffinity()
+            Prefs.putString(USER_DATA, Gson().toJson(obrCreateAccount?.data?.data))
             context.startActivity(Intent(context, MainActivity::class.java))
         }
 

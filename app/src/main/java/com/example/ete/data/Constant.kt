@@ -13,6 +13,7 @@ object Constant {
         const val IDENTITY_ID: String = "identityId"
         const val AWS_TOKEN: String = "awsToken"
         const val DEVICE_ID = "deviceId"
+        const val IS_MUTE: String = "isMute"
     }
 
     //Intent keys
@@ -166,6 +167,16 @@ object Constant {
         LOGIN,
         OTP,
         CREATE_ACCOUNT
+    }
+
+    //Post type key
+    object PostType {
+        const val ACCOUNT = 100L
+        const val HASHTAG = 200L
+        const val LIBRARY = 300L
+        const val BOOKMARK = 400L
+        const val FOR_YOU = 500L
+        const val RESOURCE = 600L
     }
 
     enum class MainScreen {

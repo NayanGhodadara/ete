@@ -5,6 +5,7 @@ import com.example.ete.data.bean.aws.AWSBean
 import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.dropdown.DropDownListBean
 import com.example.ete.data.bean.otp.OtpBean
+import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.bean.update.UpdateBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.helper.ApiCallback
@@ -73,6 +74,21 @@ class ApiRepositoryImpl @Inject constructor(private val apiInterface: ApiInterfa
         emit(Resource.loading(null))
         try {
             val response = apiInterface.logoutAsync(data).await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    fun getUserPost(data: HashMap<String, Any>): Flow<Resource<ApiResponse<ArrayList<PostBean>>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.getUserPost(data).await()
             if (response.isSuccessful) {
                 emit(Resource.success(response.body() ?: return@flow))
             } else {

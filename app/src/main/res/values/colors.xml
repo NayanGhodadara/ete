@@ -5,7 +5,57 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="r">#E6E6E6</color>
+
+    <!-- Black -->
+    <color name="black">#000000</color>
+    <color name="black_90">#E6000000</color>
+    <color name="black_60">#99000000</color>
+    <color name="black_50">#80000000</color>
+    <color name="black_40">#66000000</color>
+    <color name="black_20">#33000000</color>
+    <color name="black_12">#1F000000</color>
+    <color name="black_10">#1A000000</color>
+    <color name="black_8">#14000000</color>
+    <color name="black_6">#0F000000</color>
+    <color name="black_4">#0A000000</color>
+    <color name="black2">#0F1419</color>
+    <color name="black3">#040404</color>
+    <color name="black4">#3C3C3C</color>
+
+    <!--  Gray  -->
+    <color name="gray">#282625</color>
+    <color name="gray2">#9C9C9C</color>
+    <color name="gray2_30">#4D9C9C9C</color>
+    <color name="gray2_20">#339C9C9C</color>
+    <color name="gray2_12">#1F9C9C9C</color>
+    <color name="gray2_10">#1A9C9C9C</color>
+    <color name="gray3">#E6E6E6</color>
+    <color name="gray4">#979797</color>
+
+    <color name="white_40">#66FFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="white2">#F2F2F2</color>
+    <color name="white3">#FBFBFB</color>
+    <color name="white4">#EEEEEE</color>
+
+    <color name="purple">#83899B</color>
+    <color name="purple_80">#CC83899B</color>
+    <color name="purple_20">#3383899B</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="red">#F70303</color>
+    <color name="red2">#FF0000</color>
+
+    <color name="blue">#0057CC</color>
+    <color name="blue_40">#660057CC</color>
+    <color name="blue_60">#990057CC</color>
+    <color name="blue2">#0023D5</color>
+    <color name="blue3">#2F73D9</color>
+    <color name="blue4">#316FF6</color>
+
+    <color name="green">#23CC1D</color>
 </resources>
