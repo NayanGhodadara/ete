@@ -34,6 +34,8 @@ val grayV2 = hexToColor("#9C9C9C")
 val grayV2_10 = hexToColor("#1A9C9C9C")
 val grayV2_12 = hexToColor("#1F9C9C9C")
 
+val grayV3 = hexToColor("#979797")
+
 val red = hexToColor("#FF0000")
 
 fun hexToColor(hex: String): Color {

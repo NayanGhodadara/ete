@@ -175,4 +175,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.accompanist.swiperefresh)
     implementation("com.google.accompanist:accompanist-placeholder-material3:0.34.0")
+    //implementation("androidx.compose.material:material-pull-refresh:1.2.0-alpha03")
+    implementation("androidx.compose.foundation:foundation:1.5.4")
 }

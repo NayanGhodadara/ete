@@ -15,6 +15,7 @@ import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.bean.user.UserBean
 import com.example.ete.data.remote.ApiRepositoryImpl
 import com.example.ete.data.remote.helper.Resource
+import com.example.ete.di.event.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +42,14 @@ class MainActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
 
         apiRepoImpl.getUserPost(hqMap).collect {
             _obrGetUserPost.postValue(it)
+        }
+    }
+
+    private val _obrGetUser = SingleLiveEvent<Resource<ApiResponse<UserBean>>>()
+    val obrGetUser: LiveData<Resource<ApiResponse<UserBean>>> get() = _obrGetUser
+    fun callGetUserApi() = viewModelScope.launch {
+        apiRepoImpl.getUserAsync().collect {
+            _obrGetUser.postValue(it)
         }
     }
 }
