@@ -110,7 +110,7 @@ fun CreateAccountScreen(navController: NavController) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val obrCreateAccount by vm.obrCreateAccount.observeAsState()
+    val obrCreateAccount by vm.obrCreateAccount
     val obrUpload by vm.obrUpload.observeAsState()
 
     /**
@@ -990,7 +990,7 @@ fun CreateAccountScreen(navController: NavController) {
         else -> {}
     }
 
-    when (obrCreateAccount?.status) {
+    when (obrCreateAccount.status) {
         Status.LOADING -> {
             vm.isLoading.value = true
         }
@@ -998,18 +998,18 @@ fun CreateAccountScreen(navController: NavController) {
         Status.SUCCESS -> {
             vm.isLoading.value = false
             activity?.finishAffinity()
-            Prefs.putString(USER_DATA, Gson().toJson(obrCreateAccount?.data?.data))
+            Prefs.putString(USER_DATA, Gson().toJson(obrCreateAccount.data?.data))
             context.startActivity(Intent(context, MainActivity::class.java))
         }
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrCreateAccount?.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrCreateAccount.message.orEmpty(), CookieBarType.WARNING)
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrCreateAccount?.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrCreateAccount.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}

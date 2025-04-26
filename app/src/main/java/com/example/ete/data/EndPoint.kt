@@ -1,6 +1,8 @@
 package com.example.ete.data
 
 import com.example.ete.BuildConfig
+import com.example.ete.data.Constant.ApiObject.ID
+import com.example.ete.data.Constant.ApiObject.POST_ID
 import com.example.ete.data.Constant.ApiObject.USER_ID
 import com.example.ete.data.EndPoint.URLs.V1
 
@@ -31,10 +33,26 @@ object EndPoint {
         const val OTHER_USER_POST: String = "${USERS}/another-user-post/{$USER_ID}"
     }
 
+    //Post end point
+    object Post {
+        const val POST = "${V1}post"
+        const val DELETE_FROM_AWS = "${POST}/delete-from-s3"
+        const val REPORT_POST = "${POST}/report-post"
+        const val STORE_TEMPORARY_TABLE = "${POST}/file-url/store"
+        const val LIKE_UNLIKE_POST = "${POST}/like-unlike/{$POST_ID}"
+        const val ADD_REMOVE_POST_WISHLIST = "${POST}/wishlist/{$POST_ID}"
+        const val POST_BY_ID = "${POST}/{$ID}"
+    }
+
     //DropDownList end point
     object DropDown {
         const val COUNTRY_LIST: String = "${V1}country-list"
         const val DROP_DOWN_LIST: String = "${V1}seeder-dropdown/list"
+    }
+
+    //Library end point
+    object Library {
+        const val LIBRARY = "${V1}library"
     }
 
     object AWS {

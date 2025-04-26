@@ -84,7 +84,7 @@ fun LoginScreen(navController: NavController) {
     }
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
-    val obrSendOtp by vm.obrSendOtp.observeAsState()
+    val obrSendOtp by vm.obrSendOtp
 
     /** Field **/
     val email = remember { mutableStateOf("") }

@@ -4,6 +4,7 @@ import com.example.ete.data.bean.ApiResponse
 import com.example.ete.data.bean.aws.AWSBean
 import com.example.ete.data.bean.country.CountryBean
 import com.example.ete.data.bean.dropdown.DropDownListBean
+import com.example.ete.data.bean.library.LibraryBean
 import com.example.ete.data.bean.otp.OtpBean
 import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.bean.update.UpdateBean
@@ -89,6 +90,21 @@ class ApiRepositoryImpl @Inject constructor(private val apiInterface: ApiInterfa
         emit(Resource.loading(null))
         try {
             val response = apiInterface.getUserPost(data).await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    fun getPost(data: HashMap<String, Any>): Flow<Resource<ApiResponse<ArrayList<PostBean>>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.getPostAsync(data).await()
             if (response.isSuccessful) {
                 emit(Resource.success(response.body() ?: return@flow))
             } else {
@@ -189,6 +205,22 @@ class ApiRepositoryImpl @Inject constructor(private val apiInterface: ApiInterfa
         emit(Resource.loading(null))
         try {
             val response = apiInterface.getDropDownListAsync().await()
+            if (response.isSuccessful) {
+                emit(Resource.success(response.body() ?: return@flow))
+            } else {
+                val errorMsg = getAPIError(response.errorBody() ?: return@flow)
+                emit(Resource.warn(null, errorMsg))
+            }
+        } catch (e: Exception) {
+            emit(Resource.error(null, getNetworkErrorMessage(e)))
+        }
+    }
+
+    /** Library **/
+    fun getLibraryList(data: HashMap<String, Any>): Flow<Resource<ApiResponse<ArrayList<LibraryBean>>>> = flow {
+        emit(Resource.loading(null))
+        try {
+            val response = apiInterface.getLibraryAsync(data).await()
             if (response.isSuccessful) {
                 emit(Resource.success(response.body() ?: return@flow))
             } else {

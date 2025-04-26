@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">ete</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">ETE</string>
 
     <string name="google_oauth_client_id" translatable="false">426870800509-18poup46rp2se83aaquo7ukt6nv83qg6.apps.googleusercontent.com</string><!--web -->
 
@@ -10,13 +10,6 @@
     <string name="custom_toast">Custom toast</string>
     <string name="loading">Loading…</string>
     <string name="version_count">Version %1$s</string>
-    <string name="error_found">Error</string>
-    <string name="network_error">Network error</string>
-    <string name="timeout">Timeout</string>
-
-    <!--Permission-->
-    <string name="permission_required">Permission required</string>
-    <string name="camera_gallery_permission">Camera and Storage permission needed. Go to android setting and allow access.</string>
 
     <!-- Date Time Utils -->
     <string name="time_ago_now">few moments ago</string>
@@ -46,40 +39,106 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!--Welcome-->
+    <!-- Dimen -->
+    <dimen name="_26dp">26dp</dimen>
+    <dimen name="_7dp">7dp</dimen>
+    <dimen name="_5dp">5dp</dimen>
+    <dimen name="_80dp">80dp</dimen>
+
+    <!-- Error -->
+    <string name="error_found">Error</string>
+    <string name="network_error">Network error</string>
+    <string name="please_enter_email">Please enter email</string>
+    <string name="please_enter_number">Please enter number</string>
+    <string name="please_enter_valid_number">Please enter valid number</string>
+    <string name="please_enter_valid_email">Please enter valid email</string>
+    <string name="please_enter_valid_otp">Please enter valid OTP</string>
+    <string name="please_select_image">Please select image</string>
+    <string name="please_enter_name">Please enter name</string>
+    <string name="please_enter_username">Please enter username</string>
+    <string name="please_enter_valid_link">Please enter valid link</string>
+    <string name="please_enter_valid_username">Please enter valid username</string>
+    <string name="please_select_country">Please select country</string>
+    <string name="please_select_profile_picture">Please select profile picture</string>
+    <string name="please_enter_delete">Please enter delete</string>
+    <string name="please_select_reason">Please select a reason</string>
+    <string name="please_enter_report_message">Please enter report message</string>
+    <string name="please_select_post_type">Please select post type</string>
+    <string name="please_select_any_type">Please select any type</string>
+    <string name="please_select_plant">Please select plant</string>
+    <string name="please_select_location">Please select location</string>
+    <string name="please_enter_other_type">Please enter other type</string>
+    <string name="please_enter_something">Please enter something</string>
+    <string name="fail_to_authenticate_otp">Failed to authenticate. OTP code is invalid. Please try again.</string>
+    <string name="please_select_plant_type">Please select plant type</string>
+    <string name="please_select_water_amount">Please select water amount</string>
+    <string name="please_select_hybrid_status">Please select hybrid status</string>
+    <string name="please_select_water_type">Please select water type</string>
+    <string name="please_select_pinching_option">Please select pinching option</string>
+    <string name="please_select_sun_type">Please select sun type</string>
+    <string name="please_select_sowing_type">Please select sowing type</string>
+    <string name="please_select_label">Please select label</string>
+    <string name="age_should_be_greater_110_years">Age should be greater 110 years</string>
+    <string name="cant_find_location">Can\'t find location</string>
+    <string name="_60_second_error">Some media files exceed the 60 second limit and have been removed</string>
+    <string name="please_select_date_of_birth">Please select date of birth</string>
+    <string name="this_label_is_already_in_use">This label is already in use</string>
+    <string name="title_should_not_be_empty">Title should not be empty</string>
+
+    <!-- Other -->
+    <string name="dummy_text">Lorem ipsum dolor sit amet consectetur. Inte consectetur at nulla at diam molestie sed.</string>
+    <string name="dummy_link"><u>www.google.com</u></string>
+    <string name="blank"> </string>
+    <string name="timeout">Timeout</string>
+    <string name="skip"><u>Skip</u></string>
+    <string name="update">Update</string>d
+    <string name="app_package">package</string>
+    <string name="permission_required">Permission required</string>
+    <string name="camera_gallery_permission">Camera and storage permission needed. Go to android setting and allow access.</string>
+    <string name="location_access_needed_go_to_setting">Location access needed. Go to android setting and allow location access.</string>
+    <string name="location_access_needed_to_show_near_location">Location access needed to show near by location.</string>
+    <string name="on_gps_to_show_near_location">Please On Gps to show near by location.</string>
+    <string name="new_version_available">New version available</string>
+    <string name="required">*</string>
+    <string name="update_required">Update required</string>
+    <string name="new_update_required_to_continue_using_app">A new update is required to continue using the app. We have improved the app with better user experience, including fixes required.</string>
+    <string name="there_is_newer_version_for_download">There is a newer version available for download! Please update the app by visiting the Apple Store.</string>
+    <string name="count">%1$d+</string>
+    <string name="account_suspended">Account Suspended</string>
+    <string name="your_account_has_been_suspended">Your Account Has Been Suspended</string>
+    <string name="suspend_account_message">Your account has been temporarily suspended due to a violation of our terms of service. If you believe this is a mistake, please contact our support team at</string>
+    <string name="support_mail"><u>support@phool.com</u></string>
+    <string name="unavailable_user">unavailable user</string>
+
+    <!--  Auth  -->
     <string name="continue_with_email">Continue with Email</string>
     <string name="continue_with_phone_no">Continue with Phone No</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="continue_with_apple">Continue with Apple</string>
-
-    <!--Login-->
-    <string name="phone_number">Phone Number</string>
-    <string name="email">Email</string>
-    <string name="please_enter_number">Please enter number</string>
-    <string name="enter_number">Enter number</string>
-    <string name="please_enter_email">Please enter email</string>
+    <string name="required_email">Email<font color='#FF0000'>*</font></string>
+    <string name="required_phone_number">Phone Number<font color='#FF0000'>*</font></string>
     <string name="enter_email">Enter email</string>
-    <string name="please_enter_valid_number">Please enter valid number</string>
-    <string name="please_enter_valid_email">Please enter valid email</string>
-    <string name="or_login_with">Or login with</string>
+    <string name="enter_number">Enter number</string>
     <string name="login">Login</string>
-
-    <!--OTP-->
+    <string name="or_login_with">Or login with</string>
+    <string name="country_code">+%1$s</string>
+    <string name="zero">0</string>
+    <string name="phone_number_is_required">Phone number is required</string>
     <string name="verify_your_email">Verify your email</string>
     <string name="verify_your_number">Verify your number</string>
-    <string name="phone_verification_code_sent_to">Please enter the 6-digit code we sent to your phone number %1$sxxxxxx%2$s.</string>
-    <string name="email_verification_code_sent_to">Please enter the 6-digit code we sent to your email %1$sxxxxxxxxxx%2$s</string>
-    <string name="otp">OTP</string>
-    <string name="please_enter_valid_otp">Please enter valid OTP</string>
-    <string name="verify">Verify</string>
+    <string name="otp">otp<font color='#FF0000'>*</font></string>
     <string name="resend_code_in">Resend code in %1$s</string>
     <string name="resend">Resend</string>
+    <string name="resend_code_in_00_00">Resend code in 00:00</string>
+    <string name="verify">Verify</string>
+    <string name="search_country">Search country</string>
+    <string name="otp_sent_on">%1$sxxxxxx%1$s</string>
+    <string name="phone_verification_code_sent_to">Please enter the 6-digit code we sent to your phone number %1$sxxxxxx%2$s.</string>
+    <string name="email_verification_code_sent_to">Please enter the 6-digit code we sent to your email %1$sxxxxxxxxxx%2$s</string>
 
     <!-- Create profile -->
     <string name="create_your_profile">Create your profile</string>
-    <string name="save">Save</string>
     <string name="add_profile_picture">Add profile picture</string>
-    <string name="edit_profile_picture">Edit profile picture</string>
     <string name="enter_name">Enter name</string>
     <string name="enter_title">Enter title</string>
     <string name="enter_username">Enter username</string>
@@ -88,41 +147,57 @@
     <string name="female">Female</string>
     <string name="other">Other</string>
     <string name="enter_link">Enter link</string>
-    <string name="please_enter_valid_link">Please enter valid link</string>
     <string name="select_country">Select country</string>
-    <string name="search_country">Search country</string>
     <string name="write_here">Write here…</string>
     <string name="create">Create</string>
     <string name="bio">Bio</string>
     <string name="link">Link</string>
-    <string name="date_of_birth">Date of Birth</string>
+    <string name="required_date_of_birth">Date of Birth<font color='#FF0000'>*</font></string>
     <string name="gender">Gender</string>
-    <string name="country">Country</string>
-    <string name="name">Name</string>
-    <string name="username">Username</string>
+    <string name="required_country">Country<font color='#FF0000'>*</font></string>
+    <string name="required_name">Name<font color='#FF0000'>*</font></string>
+    <string name="required_username">Username<font color='#FF0000'>*</font></string>
     <string name="birthdate_18_year">User must be 18 years old.</string>
     <string name="select_option">Select Option</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="camera">Camera</string>
     <string name="cancel">Cancel</string>
-    <string name="please_enter_username">Please enter username</string>
-    <string name="please_select_country">Please select country</string>
-    <string name="please_select_date_of_birth">Please select date of birth</string>
 
-    <!--Main-->
+    <!-- Bottom navigation -->
     <string name="home">Home</string>
     <string name="search">Search</string>
-    <string name="my_journal">My journal</string>
+    <string name="garden">Garden</string>
     <string name="profile">Profile</string>
+    <string name="post">Post</string>
+    <string name="journal">Journal</string>
 
-    <!--Profile-->
+    <!-- User  -->
     <string name="posts">Posts</string>
     <string name="followers">Followers</string>
     <string name="following">Following</string>
     <string name="edit_profile">Edit profile</string>
+    <string name="edit_profile_picture">Edit profile picture</string>
     <string name="share_profile">Share profile</string>
     <string name="settings">Settings</string>
+    <string name="save">Save</string>
+    <string name="follow">Follow</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="phone_number">Phone number</string>
+    <string name="email">Email</string>
 
+    <!-- Connection -->
+    <string name="unblock">Unblock</string>
+    <string name="unfollow_user">Unfollow @%1$s?</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="empty"> </string>
+    <string name="unblock_user">Unblock @%1$s?</string>
+    <string name="remove_user">Remove @%1$s?</string>
+    <string name="remove">Remove</string>
+    <string name="follow_back">Follow back</string>
+    <string name="sorry">SORRY!</string>
+    <string name="you_need_to_unblock_the_following_user">You need to unblock the following user to view their profile.</string>
 
     <!-- Setting   -->
     <string name="leaderboard">Leaderboard</string>
@@ -147,7 +222,181 @@
     <string name="Report_a_problem">Report a problem</string>
     <string name="support_request">Support request</string>
     <string name="help_center">Help center</string>
-    <string name="please_enter_delete">Please enter delete</string>
+
+    <!-- Leaderboard -->
+    <string name="journal_entries">Journal entries</string>
+    <string name="interactions_score">Interactions score</string>
+    <string name="ranking">Ranking</string>
+    <string name="global">Global</string>
+    <string name="users">Users</string>
+    <string name="country">Country</string>
+    <string name="view_all">View all</string>
+
+    <!-- Help center -->
+    <string name="help_center_title">Contact us!</string>
+    <string name="help_center_description">We\'re here to help and answer any question you may have. We look forward to hearing from you.</string>
+    <string name="required_subject">Subject<font color='#FF0000'>*</font></string>
+    <string name="required_description">Description<font color='#FF0000'>*</font></string>
+    <string name="enter_subject">Enter subject</string>
+    <string name="hundred_count">%1$d/100</string>
+
+    <!-- Home -->
+    <string name="library">Library</string>
+    <string name="resources">Resources</string>
+    <string name="post_comment">%1$s  %2$s</string>
+    <string name="view_all_comment_count">View all %1$d comments</string>
+    <string name="view_comment">View %1$d comment</string>
+    <string name="block">Block</string>
+    <string name="report">Report</string>
+    <string name="block_ask">Block?</string>
+    <string name="add_a_comment">Add a comment</string>
+    <string name="comments">Comments</string>
+    <string name="reply">Reply</string>
+    <string name="view_more">View %1$d more</string>
+    <string name="why_are_you_reporting_this_post">Why are you reporting this post?</string>
+    <string name="why_are_you_reporting_this_user">Why are you reporting this user?</string>
+    <string name="are_you_sure_you_want_to_block_this_user">Are you sure you want to block this user?</string>
+    <string name="gallery_permission_message">Photos permission needed. Go to android setting and allow photos and videos access.</string>
+    <string name="camera_permission_message">Camera permission needed. Go to android setting and allow camera access.</string>
+    <string name="record_permission_message">Record audio permission needed. Go to android setting and allow record audio access.</string>
+    <string name="delete_comment">Delete comment?</string>
+    <string name="are_you_sure_you_want_to_delete_your_comment">Are you sure you want to delete your comment?</string>
+
+
+    <!--  Report option  -->
+    <string name="i_just_do_not_like_it">I just don’t like it</string>
+    <string name="it_is_spam">It’s spam</string>
+    <string name="false_information">False information</string>
+    <string name="scam_or_fraud">Scam or fraud</string>
+    <string name="nudity_or_sexual_activity">Nudity or sexual activity</string>
+    <string name="bullying_or_harassment">Bullying or harassment</string>
+    <string name="help_us_understand_the_problem">Help us understand the problem.</string>
+    <string name="what_are_you_trying_to_report">What are you trying to report?</string>
+    <string name="submit">Submit</string>
+    <string name="cancel_with_under_line"><u>Cancel</u></string>
+    <string name="thank_you_for_bringing_this_to_our_notice">Thank you for bringing this to our notice!</string>
+    <string name="thank_you_for_bringing_this_to_our_notice_we_will_review_it">Thank you for bringing this to our notice! We will review it shortly to determine if it violates our community guidelines.</string>
+    <string name="done">Done</string>
+    <string name="replying_to">Replying to %1$s</string>
+
+    <!-- post -->
+    <string name="new_post">New post</string>
+    <string name="crop">Crop</string>
+    <string name="type">Type</string>
+    <string name="write_a_caption">Write a caption....</string>
+    <string name="find_your_plant_in_library">Find your plant in library</string>
+    <string name="link_to_library">Link to library</string>
+    <string name="add_location">Add location</string>
+    <string name="location">Location</string>
+    <string name="share">Share</string>
+    <string name="select_type">Select type</string>
+    <string name="link_format">%1$s</string>
+    <string name="uploading">Uploading…</string>
+    <string name="edit">Edit</string>
+    <string name="edit_post">Edit post</string>
+    <string name="delete_post">Delete Post?</string>
+    <string name="are_you_sure_you_want_to_delete_your_post">Are you sure you want to delete your post?</string>
+    <string name="this_post_has_been_warned">This post has been warned after reviewing our terms of service. Please contact support for further questions.</string>
+
+    <!-- Create journal -->
+    <string name="new_journal">New plant journal</string>
+    <string name="edit_journal">Edit journal</string>
+    <string name="my_journal">My journal</string>
+    <string name="required_type">Type<font color='#FF0000'>*</font></string>
+    <string name="add_image_or_video"><u>Add image or video</u></string>
+    <string name="note">Note</string>
+    <string name="required_plant_type">Plant Type<font color='#FF0000'>*</font></string>
+    <string name="find_your_plant_in_our_library_and_link_it">Find your plant in our library and link it</string>
+    <string name="underline_text"><![CDATA[<u>%1$s</u>]]></string>
+    <string name="seeding_date">Seeding date</string>
+    <string name="required_title">Title<font color='#FF0000'>*</font></string>
+    <string name="label">Label</string>
+    <string name="add_label">Add label</string>
+    <string name="add_a_note">Add a note..</string>
+    <string name="enter_seeding_date">Enter seeding date</string>
+    <string name="enter_days">Enter days</string>
+    <string name="soil">Soil</string>
+    <string name="enter_soil_type">Enter soil type</string>
+    <string name="enter_rate">Enter rate</string>
+    <string name="enter_fertilizer">Enter fertilizer</string>
+    <string name="germination_date">Germination date</string>
+    <string name="enter_germination_date">Enter germination date</string>
+    <string name="enter_plant_spacing">Enter plant spacing</string>
+    <string name="manure">Manure</string>
+    <string name="enter_manure">Enter manure</string>
+    <string name="pinching_date">Pinching date</string>
+    <string name="enter_pinching_date">Enter pinching date</string>
+    <string name="others">Others</string>
+    <string name="hybrid_status">Hybrid status</string>
+    <string name="add_date">Add date</string>
+    <string name="transplantation_date">Transplantation date</string>
+    <string name="enter_transplantation_date">Enter transplantation date</string>
+    <string name="maturity_date">Maturity date</string>
+    <string name="cutting_date">Cutting date</string>
+    <string name="enter_cutting_date">Enter cutting date</string>
+    <string name="germination_rate">Germination rate (%)</string>
+    <string name="sowing_type">Sowing type</string>
+    <string name="maturity_time">Maturity time(days)</string>
+    <string name="sun_exposure">Sun exposure</string>
+    <string name="for_advanced_gardeners">For advanced gardeners</string>
+    <string name="soil_medium">Soil medium</string>
+    <string name="enter_soil_medium">Enter soil medium</string>
+    <string name="seed_source">Seed source</string>
+    <string name="enter_seed_source">Enter seed source</string>
+    <string name="variety">Variety</string>
+    <string name="enter_variety">Enter variety</string>
+    <string name="colour">Colour</string>
+    <string name="enter_colour">Enter colour</string>
+    <string name="temperature">Temperature</string>
+    <string name="enter_temperature">Enter temperature</string>
+    <string name="enter_humidity">Enter humidity</string>
+    <string name="bloom_time">Bloom time</string>
+    <string name="enter_bloom_time">Enter bloom time</string>
+    <string name="add">Add</string>
+    <string name="humidity">Humidity</string>
+    <string name="enter_percentage">Enter percentage</string>
+    <string name="add_voice_note">Add voice note</string>
+    <string name="add_journal">Add journal</string>
+    <string name="select_journal_type">Select Journal Type</string>
+    <string name="audio_time">%1$s | %2$s</string>
+    <string name="audio_time_in_details">%1$s | %2$s</string>
+    <string name="timer">00:00</string>
+    <string name="delete_journal">Delete journal?</string>
+    <string name="are_you_sure_you_want_to_delete_your_journal">Are you sure you want to delete your journal?</string>
+    <string name="info_label">Relevant keywords or phrases that are used as tags on a journal entry for categorization</string>
+    <string name="info_plant_type">The category of the plant.</string>
+    <string name="info_water">Recommended watering needs for optimal growth and health.</string>
+    <string name="info_sun">Amount of sunlight the plant or area receives..</string>
+    <string name="info_maturity_time">The expected duration from planting to when the plant is fully grown.</string>
+    <string name="info_journal_maturity_time">The number of days it takes for a plant to grow from germination to full maturity, when it reaches its optimal size, produces flowers, fruit, or seeds, and is ready for harvest or other uses.</string>
+    <string name="info_maturity_date">The date when plants reach full development and are ready for harvest or seed production.</string>
+    <string name="info_seeding_date">The date on which seeds are planted in soil or another growing medium to initiate plant growth.</string>
+    <string name="info_germination_rate">The percentage of seeds that successfully sprout and begin to grow out of the total seeds sown, used to measure the viability and effectiveness of the seeds.</string>
+    <string name="info_germination_date">The time it takes for seeds to sprout and begin growing.</string>
+    <string name="info_journal_germination_date">The date when seeds begin to sprout and grow after being planted.</string>
+    <string name="info_seed_source">Origin or supplier of seeds used for planting</string>
+    <string name="info_seed_sowing">Best practices for sowing seeds effectively.</string>
+    <string name="info_transplantation_date">The date when seedlings are moved to their final growing location.</string>
+    <string name="info_cutting_date">The date when plants or crops are first harvested by cutting them from the ground or their stems.</string>
+    <string name="info_soil_type">The kind of soil, such as sandy, clay, or loamy, which affects how well the plant grow in it.</string>
+    <string name="info_fertilizer">Substances- natural or synthetic, applied to soil or plants to provide essential nutrients for growth and enhance crop yields.</string>
+    <string name="info_manure">Organic materials like cow dung, composted wood, or vermicompost, etc used to fertilize soil and improve its nutrient content.</string>
+    <string name="info_pinching">The practice of removing the tips of plant shoots or stems to encourage branching and bushier growth.</string>
+    <string name="info_pinching_date">The date on which a gardener pinches back the tips of a plant\'s growth to encourage bushier, fuller growth and prevent it from becoming too leggy.</string>
+    <string name="info_sowing_type">Method used to plant seeds, such as direct seeding into the soil or transplanting seedlings that were started indoors or in containers.</string>
+    <string name="info_plant_spacing">Distance between plants when they are sown or transplanted</string>
+    <string name="info_colour">The typical color of the plant’s flowers etc.</string>
+    <string name="info_temperature">Conditions of warmth or cold when seeds are planted in soil.</string>
+    <string name="info_humidity">Humidity amount of moisture in the air at the time seeds are planted in the soil.</string>
+    <string name="info_variety">Distinct type or cultivar of a plant species</string>
+    <string name="info_hybrid_status">1.Hybrid F1 - first generation offspring resulting from crossing two or more distinct parent lines, typically within the same species, chosen for enhanced characteristics.\t\t\t\t\t\t 2.Open-pollinated: Non-hybrid varieties capable of reproducing similar traits from one generation to another, maintaining stable characteristics.</string>
+    <string name="info_bloom_time">The length of time during which a flower and plant remains in its blooming or flowering phase.</string>
+    <string name="info_stem_length">The average length of the plant’s stem or stalk.</string>
+    <string name="info_plant_use">Common applications for the plant, such as culinary or ornamental purposes.</string>
+    <string name="info_lifecycle">The lifecycle of a plant refers to the sequence of stages it goes through from the germination of a seed to maturity, reproduction, and eventual death.</string>
+    <string name="info_planting_season">The ideal time of year for planting this species.</string>
+    <string name="info_germination_time"> The time it takes for seeds to sprout and begin growing.</string>
+    <string name="select">Select</string>
 
     <!-- Search -->
     <string name="account">Account</string>
@@ -160,4 +409,75 @@
     <string name="seeds">Seeds</string>
     <string name="sapling">Sapling</string>
     <string name="explore">Explore</string>
+
+    <!--  Library  -->
+    <string name="details">Details</string>
+    <string name="result">Result</string>
+    <string name="clear_all"><u>Clear all</u></string>
+    <string name="sunflower_pro_cut">Sunflower ProCut</string>
+    <string name="medium">Medium</string>
+    <string name="care">Care</string>
+    <string name="everyday">Everyday</string>
+    <string name="required_water">Water<font color='#FF0000'>*</font></string>
+    <string name="water">Water</string>
+    <string name="direct">Direct</string>
+    <string name="sun">Sun</string>
+    <string name="required_sun">Sun<font color='#FF0000'>*</font></string>
+    <string name="show_more">Show more</string>
+    <string name="plant_type">Plant type</string>
+    <string name="stem_length">Stem length</string>
+    <string name="sowing_season">Sowing season</string>
+    <string name="plant_use">Plant use</string>
+    <string name="pinching">Pinching</string>
+    <string name="txt_maturity_time">Maturity time</string>
+    <string name="soil_type">Soil type</string>
+    <string name="plant_spacing">Plant spacing</string>
+    <string name="crop_time">Crop time</string>
+    <string name="planting_season">Planting season</string>
+    <string name="additional_info">Additional Information</string>
+    <string name="lifecycle">Life cycle</string>
+    <string name="features">Features</string>
+    <string name="description">Description</string>
+    <string name="fun_fact">Fun fact</string>
+    <string name="fertiliser">Fertiliser</string>
+    <string name="site_selection">Site selection</string>
+    <string name="seed_sowing">Seed sowing</string>
+    <string name="germination_time">Germination time</string>
+    <string name="growing_notes">Growing notes</string>
+
+    <!-- Journal search -->
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+
+    <!-- journal detail   -->
+    <string name="my_garden">My Garden</string>
+    <string name="plant_growing">%1$d Plant(s) growing</string>
+    <string name="next_maturity_in_days">Next maturity in %1$d days</string>
+    <string name="all">All</string>
+    <string name="percentage">Percentage</string>
+    <string name="copy">Copy</string>
+    <string name="voice_note">Voice note</string>
+    <string name="view_all_comment">View all comments</string>
+
+    <!-- Matisse -->
+    <string name="permission_request_denied">Permission request denied</string>
+    <string name="error_gif">x or y bound size should be at least %1$dpx and file size should be no more than %2$sM</string>
+
+    <!-- Media Capture -->
+    <string name="photo">Photo</string>
+    <string name="video">Video</string>
+
+    <!-- Resource and Help -->
+    <string name="resource">Resource</string>
+
+    <!-- Crop Layout -->
+    <string name="one_one">1:1</string>
+    <string name="three_four">3:4</string>
+    <string name="four_three">4:3</string>
+    <string name="nine_sixty">9:16</string>
+    <string name="sixty_nine">16:9</string>
+    <string name="original">Original</string>
+
+    <!-- preview -->
+    <string name="preview_count">%1$d of %2$d</string>
 </resources>

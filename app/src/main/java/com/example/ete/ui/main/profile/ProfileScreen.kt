@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,16 +49,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.ete.R
+import com.example.ete.data.Constant.IntentObject.INTENT_ID
+import com.example.ete.data.Constant.IntentObject.INTENT_IS_WATCH_LIST
 import com.example.ete.data.Constant.PostType.BOOKMARK
 import com.example.ete.data.Constant.PrefsKeys.USER_DATA
 import com.example.ete.data.bean.dropdown.DropDownBean
-import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.remote.helper.Status
 import com.example.ete.di.MyApplication
 import com.example.ete.theme.black
@@ -67,11 +65,12 @@ import com.example.ete.theme.gray
 import com.example.ete.theme.grayV2
 import com.example.ete.theme.grayV2_12
 import com.example.ete.ui.main.MainActivityVM
+import com.example.ete.ui.main.post.ExplorePostActivity
 import com.example.ete.ui.main.profile.edit.EditProfileActivity
 import com.example.ete.ui.main.profile.setting.SettingActivity
-import com.example.ete.ui.view.HeaderView
-import com.example.ete.ui.view.ProfileMedia
-import com.example.ete.ui.view.ProfileTabs
+import com.example.ete.ui.view.header.HeaderView
+import com.example.ete.ui.view.profile.ProfileMedia
+import com.example.ete.ui.view.profile.ProfileTabs
 import com.example.ete.ui.view.shimmer.ShimmerPostMedia
 import com.example.ete.util.cookie.CookieBar
 import com.example.ete.util.cookie.CookieBarType
@@ -85,15 +84,15 @@ import com.google.gson.Gson
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePreview() {
-    ProfileScreen(rememberNavController())
+    ProfileScreen()
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen() {
     val vm: MainActivityVM = hiltViewModel()
-    val obrGetPost = vm.obrGetUserPost.observeAsState()
-    val obrUser = vm.obrGetUser.observeAsState()
+    val obrGetPost = vm.obrGetUserPost
+    val obrUser = vm.obrGetUser
 
     //Pagination
     var isLoadingPage = false
@@ -106,7 +105,6 @@ fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
 
     val listOfTabs = remember { mutableStateListOf<DropDownBean>() }
-    val listOfPost = remember { mutableStateListOf<PostBean>() }
 
     LaunchedEffect(Unit) {
         if (listOfTabs.isEmpty()) {
@@ -120,7 +118,6 @@ fun ProfileScreen(navController: NavController) {
 
     var isRefreshing by remember { mutableStateOf(false) }
     var showShimmer by remember { mutableStateOf(false) }
-
 
     //Reset page
     fun resetPage() {
@@ -479,11 +476,17 @@ fun ProfileScreen(navController: NavController) {
                             columns = GridCells.Fixed(3),
                             contentPadding = PaddingValues(bottom = 40.dp)
                         ) {
-                            items(listOfPost) { post ->
+                            items(vm.listOfPost) { post ->
                                 ProfileMedia(
                                     post,
                                     isMultiPost = post.postImageVideo.size > 1,
-                                    isVideo = post.postImageVideo.any { it.isImage }.not()
+                                    isVideo = post.postImageVideo.any { it.isImage }.not(),
+                                    onClick = {
+                                        context.startActivity(Intent(context, ExplorePostActivity::class.java).apply {
+                                            putExtra(INTENT_IS_WATCH_LIST, isWishList)
+                                            putExtra(INTENT_ID, selectedTypeId)
+                                        })
+                                    }
                                 )
                             }
                         }
@@ -517,37 +520,37 @@ fun ProfileScreen(navController: NavController) {
         else -> {}
     }
 
-    when (obrGetPost.value?.status) {
+    when (obrGetPost.value.status) {
         Status.LOADING -> {
             isLoadingPage = true
-            showShimmer = page == 1 && !isRefreshing && listOfPost.isEmpty()
+            showShimmer = page == 1 && !isRefreshing && vm.listOfPost.isEmpty()
         }
 
         Status.SUCCESS -> {
             showShimmer = false
             isRefreshing = false
             isLoadingPage = false
-            isLastPageData = obrGetPost.value?.data?.meta?.currentPage == obrGetPost.value?.data?.meta?.totalPages
+            isLastPageData = obrGetPost.value.data?.meta?.currentPage == obrGetPost.value.data?.meta?.totalPages
 
             if (page == 1) {
-                listOfPost.clear()
+                vm.listOfPost.clear()
             }
 
-            listOfPost.addAll(obrGetPost.value?.data?.data ?: arrayListOf())
+            vm.listOfPost.addAll(obrGetPost.value.data?.data ?: arrayListOf())
         }
 
         Status.WARN -> {
             showShimmer = false
             isRefreshing = false
             isLoadingPage = false
-            CookieBar(obrGetPost.value?.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrGetPost.value.message.orEmpty(), CookieBarType.WARNING)
         }
 
         Status.ERROR -> {
             showShimmer = false
             isRefreshing = false
             isLoadingPage = false
-            CookieBar(obrGetPost.value?.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrGetPost.value.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}

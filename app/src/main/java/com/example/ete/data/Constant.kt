@@ -22,7 +22,10 @@ object Constant {
         const val INTENT_PHONE = "phone"
         const val INTENT_EMAIL = "email"
         const val INTENT_AUTH_BEAN = "authBean"
-        const val INTENT_IS_FIRST_TIME= "isFirstTime"
+        const val INTENT_IS_FIRST_TIME = "isFirstTime"
+        const val INTENT_IS_WATCH_LIST = "isWatchList"
+        const val INTENT_ID = "id"
+        const val INTENT_MEDIA_URI = "mediaUri"
     }
 
     //Api key
@@ -156,7 +159,7 @@ object Constant {
         const val OPTIONAL_UPDATE: Int = 2
     }
 
-    object Gender{
+    object Gender {
         const val MALE = "Male"
         const val FEMALE = "Female"
         const val OTHER = "Other"
@@ -184,6 +187,8 @@ object Constant {
         SEARCH,
         ADD,
         MY_JOURNAL,
-        PROFILE
+        PROFILE,
+        POST_TYPE,
+        LIBRARY_TYPE,
     }
 }

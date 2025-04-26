@@ -9,10 +9,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -47,7 +53,7 @@ import com.example.ete.theme.gray
 import com.example.ete.theme.grayV2_12
 import com.example.ete.theme.red
 import com.example.ete.theme.white
-import com.example.ete.ui.view.HeaderView
+import com.example.ete.ui.view.header.HeaderView
 import com.example.ete.ui.view.RowSetting
 import com.example.ete.ui.welcome.nav.AuthActivity
 import com.example.ete.util.cookie.CookieBar
@@ -99,6 +105,16 @@ class SettingActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(with(LocalDensity.current) {
+                        WindowInsets.systemBars.getTop(this).toDp()
+                    })
+                    .background(white)
+            )
+
             HeaderView(
                 title = stringResource(R.string.settings),
                 isBackShow = true,
@@ -215,6 +231,8 @@ class SettingActivity : ComponentActivity() {
                 Status.LOADING -> {
                     showDialogProgress.value = true
                 }
+
+                Status.INIT -> {}
             }
         }
 
@@ -245,6 +263,8 @@ class SettingActivity : ComponentActivity() {
                 Status.LOADING -> {
                     showDialogProgress.value = true
                 }
+
+                Status.INIT -> {}
             }
         }
 

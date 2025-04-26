@@ -1,12 +1,13 @@
 package com.example.ete.util.cookie
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.ete.theme.black
 import com.example.ete.theme.errorBorder
 import com.example.ete.theme.errorColor
 import com.example.ete.theme.infoBorder
@@ -43,6 +43,7 @@ import com.example.ete.theme.successBorder
 import com.example.ete.theme.successColor
 import com.example.ete.theme.warningBorder
 import com.example.ete.theme.warningColor
+import com.example.ete.theme.white
 import kotlinx.coroutines.delay
 
 enum class CookieBarType {
@@ -53,7 +54,7 @@ enum class CookieBarType {
 }
 
 @Composable
-fun CookieBar(message: String, cookieBarType: CookieBarType) {
+fun CookieBar(message: String, cookieBarType: CookieBarType, onRemove: () -> Unit = {}) {
     var isVisible by remember { mutableStateOf(false) }
 
     val backgroundColor = when (cookieBarType) {
@@ -95,29 +96,30 @@ fun CookieBar(message: String, cookieBarType: CookieBarType) {
         isVisible = true
         delay(3000)
         isVisible = false
+        onRemove()
     }
 
     AnimatedVisibility(
         visible = isVisible,
-        enter = fadeIn(animationSpec = tween(500)) +
-                slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(600)), // Slide in from left
-        exit = slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(600)) +
-                fadeOut(animationSpec = tween(300, delayMillis = 300)), // Delay fade until slide is halfway
+        enter = fadeIn(animationSpec = tween(800)) + // Slower fade-in
+                slideInVertically(initialOffsetY = { -it }, animationSpec = tween(800)), // Slide in from top with a slower duration
+        exit = slideOutVertically(targetOffsetY = { -it }, animationSpec = tween(600)) +
+                fadeOut(animationSpec = tween(300, delayMillis = 300)), // Slide out to top
         modifier = Modifier.zIndex(1f)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 5.dp)
-                .padding(end = 18.dp)
-                .background(backgroundColor, shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp))
-                .border(1.dp, borderColor, shape = RoundedCornerShape(topEnd = 10.dp, bottomEnd = 10.dp))
+                .padding(horizontal = 18.dp)
+                .background(backgroundColor, shape = RoundedCornerShape(10.dp))
+                .border(1.dp, borderColor, shape = RoundedCornerShape(10.dp))
                 .height(IntrinsicSize.Max),
         ) {
             Spacer(
                 Modifier
                     .fillMaxHeight()
-                    .width(15.dp)
+                    .width(0.dp)
                     .background(borderColor)
             )
 
@@ -126,12 +128,12 @@ fun CookieBar(message: String, cookieBarType: CookieBarType) {
             Text(
                 modifier = Modifier
                     .padding(start = 25.dp, end = 18.dp)
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 20.dp),
                 text = message,
-                color = black,
-                fontSize = 14.sp,
+                color = white,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.headlineSmall
             )
         }
     }

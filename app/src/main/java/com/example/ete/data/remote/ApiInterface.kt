@@ -5,6 +5,7 @@ import com.example.ete.data.EndPoint
 import com.example.ete.data.bean.ApiResponse
 import com.example.ete.data.bean.aws.AWSBean
 import com.example.ete.data.bean.country.CountryBean
+import com.example.ete.data.bean.library.LibraryBean
 import com.example.ete.data.bean.otp.OtpBean
 import com.example.ete.data.bean.post.PostBean
 import com.example.ete.data.bean.update.UpdateBean
@@ -36,6 +37,12 @@ interface ApiInterface {
     @GET(EndPoint.User.USER_POST)
     fun getUserPost(@QueryMap data: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<ArrayList<PostBean>>>>
 
+
+    /** Post **/
+    @GET(EndPoint.Post.POST)
+    fun getPostAsync(@QueryMap data: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<ArrayList<PostBean>>>>
+
+
     /** User **/
     @GET(EndPoint.User.USERS)
     fun getUserAsync(): Deferred<Response<ApiResponse<UserBean>>>
@@ -52,6 +59,10 @@ interface ApiInterface {
     /** DropDownList **/
     @GET(EndPoint.DropDown.DROP_DOWN_LIST)
     fun getDropDownListAsync(): Deferred<Response<ApiResponse<DropDownListBean>>>
+
+    /** Library **/
+    @GET(EndPoint.Library.LIBRARY)
+    fun getLibraryAsync(@QueryMap data: HashMap<String, @JvmSuppressWildcards Any>): Deferred<Response<ApiResponse<ArrayList<LibraryBean>>>>
 
     /** AWS **/
     @GET(EndPoint.AWS.AWS_TOKEN)

@@ -27,10 +27,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -83,7 +87,7 @@ import com.example.ete.theme.grayV2_10
 import com.example.ete.theme.grayV2_12
 import com.example.ete.theme.red
 import com.example.ete.theme.white
-import com.example.ete.ui.view.HeaderView
+import com.example.ete.ui.view.header.HeaderView
 import com.example.ete.util.AppUtils.copyImageToAppStorage
 import com.example.ete.util.AppUtils.createImageUri
 import com.example.ete.util.cookie.CookieBar
@@ -105,6 +109,7 @@ class EditProfileActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             EteTheme {
                 PreviewEditAccount()
@@ -294,6 +299,16 @@ class EditProfileActivity : ComponentActivity() {
                 .fillMaxSize()
                 .background(white)
         ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(with(LocalDensity.current) {
+                        WindowInsets.systemBars.getTop(this).toDp()
+                    })
+                    .background(white)
+            )
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -308,620 +323,626 @@ class EditProfileActivity : ComponentActivity() {
                     }
                 )
 
-                /** Profile pic **/
-                if (showImagePicker.value) {
-                    ShowImagePickerDialog(
-                        openCamera = {
-                            if (isCameraPermissionGrant) {
-                                val uri = createImageUri(this@EditProfileActivity)
-                                tempUri.value = uri
-                                uri.let { imageLauncher.launch(it) }
-                            } else {
-                                cameraPermissionLauncher.launch(CAMERA)
-                            }
-                            showImagePicker.value = false
-                        },
-                        openGallery = {
-                            if (isGalleryPermissionGrant) {
-                                galleryLauncher.launch("image/*")
-                            } else {
-                                galleryPermissionLauncher.launch(
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        arrayOf(
-                                            READ_MEDIA_IMAGES,
-                                            READ_MEDIA_VIDEO
-                                        )
-                                    } else {
-                                        arrayOf(
-                                            READ_EXTERNAL_STORAGE,
-                                            WRITE_EXTERNAL_STORAGE
-                                        )
-                                    }
-                                )
-                            }
-                            showImagePicker.value = false
-                        },
-                        onDismiss = {
-                            showImagePicker.value = false
-                        }
-                    )
-                }
-
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = imageUri.value,
-                        error = painterResource(id = R.drawable.ic_profile_placeholder),
-                        placeholder = painterResource(id = R.drawable.ic_profile_placeholder)
-                    ),
-                    contentDescription = null,
-                    Modifier
-                        .padding(top = 34.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .size(90.dp)
-                        .clip(shape = RoundedCornerShape(360.dp))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (showImagePicker.value.not()) {
-                                showImagePicker.value = true
-                            }
-                        },
-                    contentScale = ContentScale.Crop,
-                )
-
-                Text(
-                    text = stringResource(R.string.edit_profile_picture),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = black,
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                        .padding(horizontal = 24.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (showImagePicker.value.not()) {
-                                showImagePicker.value = true
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+
+                    /** Profile pic **/
+                    if (showImagePicker.value) {
+                        ShowImagePickerDialog(
+                            openCamera = {
+                                if (isCameraPermissionGrant) {
+                                    val uri = createImageUri(this@EditProfileActivity)
+                                    tempUri.value = uri
+                                    uri.let { imageLauncher.launch(it) }
+                                } else {
+                                    cameraPermissionLauncher.launch(CAMERA)
+                                }
+                                showImagePicker.value = false
+                            },
+                            openGallery = {
+                                if (isGalleryPermissionGrant) {
+                                    galleryLauncher.launch("image/*")
+                                } else {
+                                    galleryPermissionLauncher.launch(
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            arrayOf(
+                                                READ_MEDIA_IMAGES,
+                                                READ_MEDIA_VIDEO
+                                            )
+                                        } else {
+                                            arrayOf(
+                                                READ_EXTERNAL_STORAGE,
+                                                WRITE_EXTERNAL_STORAGE
+                                            )
+                                        }
+                                    )
+                                }
+                                showImagePicker.value = false
+                            },
+                            onDismiss = {
+                                showImagePicker.value = false
                             }
-                        },
-                    textAlign = TextAlign.Center
-                )
-
-                /** Name Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 21.dp)
-                ) {
-                    Text(
-                        text = CustomBuildAnnotatedString.instance.getReqString(
-                            stringResource(R.string.name)
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(
-                                1.dp, if (nameErrorMsg.value.isNotEmpty()) {
-                                    red
-                                } else {
-                                    grayV2_12
-                                }, shape = RoundedCornerShape(10.dp)
-                            )
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        if (nameField.value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.enter_name),
-                                color = grayV2,
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        BasicTextField(
-                            value = nameField.value,
-                            onValueChange = { nameField.value = it },
-                            maxLines = 1,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next
-                            ),
-                            modifier = Modifier.fillMaxWidth()
                         )
                     }
-                }
 
-                Row {
-                    Spacer(
-                        modifier = Modifier.weight(0.35f)
-                    )
-                    Text(
-                        text = nameErrorMsg.value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = red,
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(start = 2.dp, end = 24.dp),
-                        textAlign = TextAlign.Start
-                    )
-                }
-
-                /** Username Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 5.dp)
-                ) {
-                    Text(
-                        text = CustomBuildAnnotatedString.instance.getReqString(
-                            stringResource(R.string.username)
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = imageUri.value,
+                            error = painterResource(id = R.drawable.ic_profile_placeholder),
+                            placeholder = painterResource(id = R.drawable.ic_profile_placeholder)
                         ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
+                        contentDescription = null,
+                        Modifier
+                            .padding(top = 34.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .size(90.dp)
+                            .clip(shape = RoundedCornerShape(360.dp))
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
                             ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(
-                                1.dp, if (usernameErrorMsg.value.isNotEmpty()) {
-                                    red
-                                } else {
-                                    grayV2_12
-                                }, shape = RoundedCornerShape(10.dp)
-                            )
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        if (usernameField.value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.enter_username),
-                                color = grayV2,
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        BasicTextField(
-                            value = usernameField.value,
-                            onValueChange = { usernameField.value = it },
-                            maxLines = 1,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Email, imeAction = ImeAction.Next
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-
-                Row {
-                    Spacer(
-                        modifier = Modifier.weight(0.35f)
-                    )
-                    Text(
-                        text = usernameErrorMsg.value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = red,
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(start = 2.dp, end = 24.dp),
-                        textAlign = TextAlign.Start
-                    )
-                }
-
-                /** Dob Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 5.dp)
-                ) {
-                    Text(
-                        text = CustomBuildAnnotatedString.instance.getReqString(
-                            stringResource(R.string.date_of_birth)
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(
-                                1.dp, grayV2_12, shape = RoundedCornerShape(10.dp)
-                            )
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                if (showDatePicker.not()) {
-                                    showDatePicker = true
+                                if (showImagePicker.value.not()) {
+                                    showImagePicker.value = true
                                 }
                             },
-                        contentAlignment = Alignment.CenterStart
+                        contentScale = ContentScale.Crop,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.edit_profile_picture),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = black,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                            .padding(horizontal = 24.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                if (showImagePicker.value.not()) {
+                                    showImagePicker.value = true
+                                }
+                            },
+                        textAlign = TextAlign.Center
+                    )
+
+                    /** Name Fields **/
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 21.dp)
                     ) {
-                        if (dobField.value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.enter_date_of_birth),
-                                color = grayV2,
-                                style = MaterialTheme.typography.bodyLarge,
+                        Text(
+                            text = CustomBuildAnnotatedString.instance.getReqString(
+                                stringResource(R.string.name)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(
+                                    1.dp, if (nameErrorMsg.value.isNotEmpty()) {
+                                        red
+                                    } else {
+                                        grayV2_12
+                                    }, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (nameField.value.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.enter_name),
+                                    color = grayV2,
+                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            BasicTextField(
+                                value = nameField.value,
+                                onValueChange = { nameField.value = it },
                                 maxLines = 1,
-                                fontSize = 12.sp,
-                                overflow = TextOverflow.Ellipsis,
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Email,
+                                    imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    Row {
+                        Spacer(
+                            modifier = Modifier.weight(0.35f)
+                        )
+                        Text(
+                            text = nameErrorMsg.value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = red,
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(start = 2.dp, end = 24.dp),
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    /** Username Fields **/
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 5.dp)
+                    ) {
+                        Text(
+                            text = CustomBuildAnnotatedString.instance.getReqString(
+                                stringResource(R.string.username)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(
+                                    1.dp, if (usernameErrorMsg.value.isNotEmpty()) {
+                                        red
+                                    } else {
+                                        grayV2_12
+                                    }, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (usernameField.value.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.enter_username),
+                                    color = grayV2,
+                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            BasicTextField(
+                                value = usernameField.value,
+                                onValueChange = { usernameField.value = it },
+                                maxLines = 1,
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Email, imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    Row {
+                        Spacer(
+                            modifier = Modifier.weight(0.35f)
+                        )
+                        Text(
+                            text = usernameErrorMsg.value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = red,
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(start = 2.dp, end = 24.dp),
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    /** Dob Fields **/
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 5.dp)
+                    ) {
+                        Text(
+                            text = CustomBuildAnnotatedString.instance.getReqString(
+                                stringResource(R.string.date_of_birth)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(
+                                    1.dp, grayV2_12, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    if (showDatePicker.not()) {
+                                        showDatePicker = true
+                                    }
+                                },
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (dobField.value.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.enter_date_of_birth),
+                                    color = grayV2,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    maxLines = 1,
+                                    fontSize = 12.sp,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 24.dp)
+                                )
+                            }
+
+                            BasicTextField(
+                                value = dobField.value,
+                                onValueChange = { dobField.value = it },
+                                maxLines = 1,
+                                enabled = false,
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(end = 24.dp)
                             )
-                        }
-
-                        BasicTextField(
-                            value = dobField.value,
-                            onValueChange = { dobField.value = it },
-                            maxLines = 1,
-                            enabled = false,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 24.dp)
-                        )
 
 
-                        if (showDatePicker) {
-                            ShowDateDialog(selectedDateInMillis, onDateSelect = { newDate, formatedDate ->
-                                if (newDate == null) {
+                            if (showDatePicker) {
+                                ShowDateDialog(selectedDateInMillis, onDateSelect = { newDate, formatedDate ->
+                                    if (newDate == null) {
+                                        showDatePicker = false
+                                        return@ShowDateDialog
+                                    }
+
+                                    selectedDateInMillis = newDate
+                                    dobField.value = formatedDate
                                     showDatePicker = false
-                                    return@ShowDateDialog
-                                }
+                                })
+                            }
 
-                                selectedDateInMillis = newDate
-                                dobField.value = formatedDate
-                                showDatePicker = false
-                            })
+                            // Calendar Icon
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_date),
+                                contentDescription = "Calendar Icon",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterEnd)
+                            )
                         }
-
-                        // Calendar Icon
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_date),
-                            contentDescription = "Calendar Icon",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(Alignment.CenterEnd)
-                        )
                     }
-                }
 
 
-                /** Gender Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 18.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.gender),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
+                    /** Gender Fields **/
                     Row(
-                        modifier = Modifier
-                            .weight(0.65f),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 18.dp)
                     ) {
-                        listOf(MALE, FEMALE, OTHER).forEachIndexed { _, gender ->
-                            RadioButton(
-                                selected = ganderRdo.value == gender,
-                                onClick = {
-                                    ganderRdo.value = gender
-                                },
-                                modifier = Modifier
-                                    .size(20.dp),
-                                colors = RadioButtonDefaults.colors(
-                                    unselectedColor = black,
-                                    selectedColor = black
-                                )
-                            )
+                        Text(
+                            text = stringResource(R.string.gender),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
 
-                            Text(
-                                text = gender,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = black,
-                                fontSize = 12.sp,
-                                textAlign = TextAlign.Center,
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .weight(0.65f),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            listOf(MALE, FEMALE, OTHER).forEachIndexed { _, gender ->
+                                RadioButton(
+                                    selected = ganderRdo.value == gender,
+                                    onClick = {
+                                        ganderRdo.value = gender
+                                    },
+                                    modifier = Modifier
+                                        .size(20.dp),
+                                    colors = RadioButtonDefaults.colors(
+                                        unselectedColor = black,
+                                        selectedColor = black
+                                    )
+                                )
+
+                                Text(
+                                    text = gender,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = black,
+                                    fontSize = 12.sp,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .padding(start = 6.dp, end = 18.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    /** Link Fields **/
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 18.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.link),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(
+                                    1.dp, if (linkErrorMsg.value.isNotEmpty()) {
+                                        red
+                                    } else {
+                                        grayV2_12
+                                    }, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (linkField.value.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.enter_link),
+                                    color = grayV2,
+                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            BasicTextField(
+                                value = linkField.value,
+                                onValueChange = { linkField.value = it },
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .padding(start = 6.dp, end = 18.dp)
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Uri, imeAction = ImeAction.Next
+                                ),
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
-                }
 
-                /** Link Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 18.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.link),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(
-                                1.dp, if (linkErrorMsg.value.isNotEmpty()) {
-                                    red
-                                } else {
-                                    grayV2_12
-                                }, shape = RoundedCornerShape(10.dp)
-                            )
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        if (linkField.value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.enter_link),
-                                color = grayV2,
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        BasicTextField(
-                            value = linkField.value,
-                            onValueChange = { linkField.value = it },
-                            maxLines = 1,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Uri, imeAction = ImeAction.Next
-                            ),
-                            modifier = Modifier.fillMaxWidth()
+                    Row {
+                        Spacer(
+                            modifier = Modifier.weight(0.35f)
+                        )
+                        Text(
+                            text = linkErrorMsg.value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = red,
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(start = 2.dp, end = 24.dp),
+                            textAlign = TextAlign.Start
                         )
                     }
-                }
 
-                Row {
-                    Spacer(
-                        modifier = Modifier.weight(0.35f)
-                    )
-                    Text(
-                        text = linkErrorMsg.value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = red,
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(start = 2.dp, end = 24.dp),
-                        textAlign = TextAlign.Start
-                    )
-                }
-
-                /** Country Fields **/
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 5.dp)
-                ) {
-                    Text(
-                        text = CustomBuildAnnotatedString.instance.getReqString(
-                            stringResource(R.string.country)
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp),
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(
-                                1.dp, if (countryErrorMsg.value.isNotEmpty()) red else grayV2_12, shape = RoundedCornerShape(10.dp)
-                            )
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                if (showCountryDialog.value.not()) {
-                                    showCountryDialog.value = true
-                                }
-                            },
-                        contentAlignment = Alignment.CenterStart
+                    /** Country Fields **/
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 5.dp)
                     ) {
-                        if (countryBean.value.title.orEmpty().isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.select_country),
-                                color = grayV2,
-                                style = MaterialTheme.typography.bodyLarge,
+                        Text(
+                            text = CustomBuildAnnotatedString.instance.getReqString(
+                                stringResource(R.string.country)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp),
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(
+                                    1.dp, if (countryErrorMsg.value.isNotEmpty()) red else grayV2_12, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    if (showCountryDialog.value.not()) {
+                                        showCountryDialog.value = true
+                                    }
+                                },
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (countryBean.value.title.orEmpty().isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.select_country),
+                                    color = grayV2,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    maxLines = 1,
+                                    fontSize = 12.sp,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 24.dp),
+                                )
+                            }
+
+                            BasicTextField(
+                                value = countryBean.value.title.orEmpty(),
+                                onValueChange = { countryBean.value.title = it },
                                 maxLines = 1,
-                                fontSize = 12.sp,
-                                overflow = TextOverflow.Ellipsis,
+                                enabled = false,
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(end = 24.dp),
                             )
-                        }
 
-                        BasicTextField(
-                            value = countryBean.value.title.orEmpty(),
-                            onValueChange = { countryBean.value.title = it },
-                            maxLines = 1,
-                            enabled = false,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 24.dp),
-                        )
-
-                        // Country Icon
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_arrow_down),
-                            contentDescription = "Calendar Icon",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(Alignment.CenterEnd)
-                        )
-                    }
-                }
-
-                if (showCountryDialog.value) {
-                    ShowCountryDialog(
-                        onClick = { selectedCountryBean ->
-                            countryBean.value = selectedCountryBean
-                            showCountryDialog.value = false
-                        },
-                        onDismiss = {
-                            showCountryDialog.value = false
-                        }
-                    )
-                }
-
-
-                Row {
-                    Spacer(
-                        modifier = Modifier.weight(0.35f)
-                    )
-                    Text(
-                        text = countryErrorMsg.value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = red,
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(start = 2.dp, end = 24.dp),
-                        textAlign = TextAlign.Start
-                    )
-                }
-
-                /** Bio Fields **/
-                Row(
-                    modifier = Modifier.padding(top = 5.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.bio),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = black,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .weight(0.35f)
-                            .padding(start = 24.dp, end = 19.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-
-                            },
-                        textAlign = TextAlign.Start
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .padding(end = 24.dp)
-                            .border(1.dp, grayV2_12, shape = RoundedCornerShape(10.dp))
-                            .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.TopStart
-                    ) {
-                        if (bioField.value.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.write_here),
-                                color = grayV2,
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.bodyLarge,
+                            // Country Icon
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_arrow_down),
+                                contentDescription = "Calendar Icon",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterEnd)
                             )
                         }
-                        BasicTextField(
-                            value = bioField.value,
-                            onValueChange = { bioField.value = it },
-                            maxLines = 4,
-                            minLines = 4,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            modifier = Modifier.fillMaxWidth()
+                    }
+
+                    if (showCountryDialog.value) {
+                        ShowCountryDialog(
+                            onClick = { selectedCountryBean ->
+                                countryBean.value = selectedCountryBean
+                                showCountryDialog.value = false
+                            },
+                            onDismiss = {
+                                showCountryDialog.value = false
+                            }
                         )
+                    }
+
+
+                    Row {
+                        Spacer(
+                            modifier = Modifier.weight(0.35f)
+                        )
+                        Text(
+                            text = countryErrorMsg.value,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = red,
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(start = 2.dp, end = 24.dp),
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    /** Bio Fields **/
+                    Row(
+                        modifier = Modifier.padding(top = 5.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.bio),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = black,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .weight(0.35f)
+                                .padding(start = 24.dp, end = 19.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+
+                                },
+                            textAlign = TextAlign.Start
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(0.65f)
+                                .padding(end = 24.dp)
+                                .border(1.dp, grayV2_12, shape = RoundedCornerShape(10.dp))
+                                .background(color = grayV2_10, shape = RoundedCornerShape(9.dp))
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+                            if (bioField.value.isEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.write_here),
+                                    color = grayV2,
+                                    fontSize = 12.sp,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
+                            BasicTextField(
+                                value = bioField.value,
+                                onValueChange = { bioField.value = it },
+                                maxLines = 4,
+                                minLines = 4,
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = black),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
-
             /** Update **/
             Box(
                 Modifier

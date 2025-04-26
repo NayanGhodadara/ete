@@ -1,4 +1,4 @@
-package com.example.ete.ui.view
+package com.example.ete.ui.view.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.ete.data.Constant.PostType.BOOKMARK
 import com.example.ete.data.bean.dropdown.DropDownBean
 import com.example.ete.theme.black
 import com.example.ete.theme.grayV2

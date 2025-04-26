@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 
 
 @Preview(showSystemUi = true)
@@ -18,7 +17,7 @@ fun SearchPreview() {
 }
 
 @Composable
-fun SearchScreen(navController: NavController? = null) {
+fun SearchScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

@@ -1,7 +1,7 @@
 package com.example.ete.data.bean.post
 
 import android.content.Context
-import com.ete.mobile.app.data.bean.post.PostMediaBean
+import com.example.ete.data.bean.post.PostMediaBean
 import com.example.ete.data.Constant
 import com.example.ete.data.bean.comment.CommentedUserBean
 import com.example.ete.util.date_time.DateTimeUnits
@@ -83,6 +83,7 @@ data class PostBean(
     var isVideoClick: Boolean = false,
 
     var isJournal: Boolean = false,
+    var showPopup: Boolean = false,
 ) : Serializable {
 
     fun getCreatedTimeText(context: Context): String {

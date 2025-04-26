@@ -4,7 +4,11 @@ package com.example.ete.di.viewmodel
 
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.ete.data.bean.dropdown.DropDownBean
+import com.example.ete.data.bean.post.PostBean
 import com.example.ete.di.MyApplication
 import com.example.ete.di.event.SingleLiveEvent
 import io.reactivex.disposables.CompositeDisposable

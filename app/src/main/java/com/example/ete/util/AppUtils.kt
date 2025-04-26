@@ -1,14 +1,17 @@
 package com.example.ete.util
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.ete.data.Constant.PrefsKeys.AWS_TOKEN
 import com.example.ete.data.Constant.PrefsKeys.IDENTITY_ID
@@ -27,6 +30,22 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 object AppUtils {
+
+
+    fun checkLocationPermission(context: Context): Boolean {
+        return if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
+        }
+    }
+
+    //Check GPS
+    fun isGPS(context: Context): Boolean {
+        val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
 
     fun copyImageToAppStorage(context: Context, uri: Uri): String? {
         val appDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ETE")
@@ -47,7 +66,6 @@ object AppUtils {
             null
         }
     }
-
 
     fun createImageUri(context: Context): Uri {
         val appSpecificDir = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "ETE")

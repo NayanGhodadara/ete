@@ -1,4 +1,4 @@
-package com.ete.mobile.app.data.bean.post
+package com.example.ete.data.bean.post
 
 import android.annotation.SuppressLint
 import com.google.gson.annotations.SerializedName
@@ -16,7 +16,7 @@ data class PostMediaBean(
     val thumbnailUrl: String? = null,
 
     @SerializedName("id")
-    val id: Int = Random.nextInt(1000000),
+    val id: Int = Random.Default.nextInt(1000000),
 
     var isUploading: Boolean = true,
     var compressMediaPath: String? = null,

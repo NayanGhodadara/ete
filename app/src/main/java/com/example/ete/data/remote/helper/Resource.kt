@@ -1,13 +1,14 @@
 package com.example.ete.data.remote.helper
 
 enum class Status {
+    INIT,
     SUCCESS,
     ERROR,
     WARN,
     LOADING
 }
 
-data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
+data class Resource<out T>(val status: Status = Status.INIT, val data: T? = null, val message: String? = null) {
     companion object {
         fun <T> success(data: T): Resource<T> =
             Resource(status = Status.SUCCESS, data = data, message = null)

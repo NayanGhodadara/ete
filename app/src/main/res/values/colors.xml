@@ -6,7 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="r">#E6E6E6</color>
+    <color name="r">#000000</color>
 
     <!-- Black -->
     <color name="black">#000000</color>

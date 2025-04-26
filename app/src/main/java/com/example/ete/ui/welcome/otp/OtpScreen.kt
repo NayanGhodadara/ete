@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,8 +89,8 @@ fun OtpScreen(navController: NavController) {
         }
     }
 
-    val obrSendOtp by vm.obrSendOtp.observeAsState()
-    val obrVerify by vm.obrVerify.observeAsState()
+    val obrSendOtp by vm.obrSendOtp
+    val obrVerify by vm.obrVerify
 
     val authBean = navController.previousBackStackEntry
         ?.savedStateHandle
@@ -393,32 +392,32 @@ fun OtpScreen(navController: NavController) {
     }
 
     /** Observer **/
-    when (obrSendOtp?.status) {
+    when (obrSendOtp.status) {
         Status.LOADING -> {
             vm.isLoading.value = true
         }
 
         Status.SUCCESS -> {
             vm.isLoading.value = false
-            authBean?.orderId = obrSendOtp?.data?.data?.orderId.orEmpty()
-            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.SUCCESS)
+            authBean?.orderId = obrSendOtp.data?.data?.orderId.orEmpty()
+            CookieBar(obrSendOtp.message.orEmpty(), CookieBarType.SUCCESS)
         }
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrSendOtp.message.orEmpty(), CookieBarType.WARNING)
 
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrSendOtp?.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrSendOtp.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}
     }
 
-    when (obrVerify?.status) {
+    when (obrVerify.status) {
         Status.LOADING -> {
             vm.isLoading.value = true
         }
@@ -426,7 +425,7 @@ fun OtpScreen(navController: NavController) {
         Status.SUCCESS -> {
             vm.isLoading.value = false
 
-            val userData = obrVerify?.data?.data
+            val userData = obrVerify.data?.data
             Prefs.putString(USER_DATA, Gson().toJson(userData))
             Prefs.putString(AUTH_DATA, Gson().toJson(userData?.authentication))
 
@@ -447,12 +446,12 @@ fun OtpScreen(navController: NavController) {
 
         Status.WARN -> {
             vm.isLoading.value = false
-            CookieBar(obrVerify?.message.orEmpty(), CookieBarType.WARNING)
+            CookieBar(obrVerify.message.orEmpty(), CookieBarType.WARNING)
         }
 
         Status.ERROR -> {
             vm.isLoading.value = false
-            CookieBar(obrVerify?.message.orEmpty(), CookieBarType.ERROR)
+            CookieBar(obrVerify.message.orEmpty(), CookieBarType.ERROR)
         }
 
         else -> {}

@@ -84,6 +84,8 @@ class SplashActivity : ComponentActivity() {
                 Status.WARN -> {
                     nextScreen(this, vm)
                 }
+
+                Status.INIT -> {}
             }
         }
 
@@ -122,6 +124,8 @@ class SplashActivity : ComponentActivity() {
                     startActivity(Intent(this, AuthActivity::class.java))
                     finish()
                 }
+
+                Status.INIT -> {}
             }
         }
 

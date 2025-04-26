@@ -2,13 +2,12 @@ package com.example.ete.ui.welcome.nav
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
@@ -60,8 +59,8 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
     var userBean = UserBean()
 
     /** Social login **/
-    private val _obrSocialLogin = MutableLiveData<Resource<ApiResponse<UserBean>>>()
-    val obrSocialLogin: LiveData<Resource<ApiResponse<UserBean>>> get() = _obrSocialLogin
+    private val _obrSocialLogin = mutableStateOf(Resource<ApiResponse<UserBean>>())
+    val obrSocialLogin: State<Resource<ApiResponse<UserBean>>> get() = _obrSocialLogin
     fun callSocialLoginApi() = viewModelScope.launch {
         val rqMap = HashMap<String, Any>()
         if (authBean.email.isEmpty().not()) {
@@ -81,8 +80,8 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
     /**
      * Send Otp
      * **/
-    private val _obrSendOtp = MutableLiveData<Resource<ApiResponse<OtpBean>>>()
-    val obrSendOtp: LiveData<Resource<ApiResponse<OtpBean>>> get() = _obrSendOtp
+    private val _obrSendOtp = mutableStateOf(Resource<ApiResponse<OtpBean>>())
+    val obrSendOtp: State<Resource<ApiResponse<OtpBean>>> get() = _obrSendOtp
     fun callSendOtpAsync() = viewModelScope.launch {
         _obrSendOtp.value = Resource.loading(null)
         val rqMap = HashMap<String, Any>()
@@ -94,15 +93,15 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
         }
 
         apiRepoImpl.sendOtpAsync(rqMap).collect {
-            _obrSendOtp.postValue(it)
+            _obrSendOtp.value = it
         }
     }
 
     /**
      *  Verify
      * **/
-    private val _obrVerify = MutableLiveData<Resource<ApiResponse<UserBean>>>()
-    val obrVerify: LiveData<Resource<ApiResponse<UserBean>>> get() = _obrVerify
+    private val _obrVerify = mutableStateOf(Resource<ApiResponse<UserBean>>())
+    val obrVerify: State<Resource<ApiResponse<UserBean>>> get() = _obrVerify
 
     fun callVerifyOtp() = viewModelScope.launch {
         val rqMap = HashMap<String, Any>()
@@ -116,15 +115,15 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
         rqMap[OTP] = authBean.otp
 
         apiRepoImpl.verifyOtpAsync(rqMap).collect {
-            _obrVerify.postValue(it)
+            _obrVerify.value = it
         }
     }
 
     /**
      *  Create account
      * **/
-    private val _obrCreateAccount = MutableLiveData<Resource<ApiResponse<UserBean>>>()
-    val obrCreateAccount: LiveData<Resource<ApiResponse<UserBean>>> get() = _obrCreateAccount
+    private val _obrCreateAccount = mutableStateOf(Resource<ApiResponse<UserBean>>())
+    val obrCreateAccount: State<Resource<ApiResponse<UserBean>>> get() = _obrCreateAccount
 
     fun callCreateAccountApi() = viewModelScope.launch {
         val rqMap = HashMap<String, Any>()
@@ -141,7 +140,7 @@ class AuthActivityVM @Inject constructor(private val apiRepoImpl: ApiRepositoryI
             rqMap[PROFILE_PIC] = userBean.profilePic.orEmpty()
 
         apiRepoImpl.updateProfile(rqMap).collect {
-            _obrCreateAccount.postValue(it)
+            _obrCreateAccount.value = it
         }
     }
 
